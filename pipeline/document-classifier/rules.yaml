@@ -1,0 +1,191 @@
+# Reguły klasyfikatora dokumentów (classifier/__init__.py) – bez uczenia maszynowego.
+#
+# Dla każdej klasy liczony jest wynik = suma wag reguł, które dopasowały się
+# do tekstu dokumentu (każda reguła liczy się raz, niezależnie od liczby
+# wystąpień). Reguły z ujemną wagą obniżają wynik (sygnały "to NIE jest ta klasa").
+#
+# Dokument dostaje klasę o najwyższym wyniku, jeśli:
+#   - wynik >= min_score tej klasy,
+#   - dopasowała się co najmniej jedna reguła oznaczona `required: true`
+#     (jeśli klasa ma takie reguły),
+#   - przewaga nad drugą klasą >= global.min_margin.
+# W przeciwnym razie dokument jest negatywny – classify() zwraca None.
+#
+# Nową klasę dokumentu dodaje się wyłącznie tutaj — bez zmian w kodzie.
+#
+# Pola klasy:
+#   min_score        – próg wyniku
+#   rules            – reguły klasyfikacji
+#
+# Pola reguły:
+#   pattern   – wyrażenie regularne (Python `re`); domyślnie bez rozróżniania
+#               wielkości liter i w trybie wielolinijkowym (^ i $ = początek/koniec linii)
+#   weight    – waga (może być ujemna)
+#   required  – (opcjonalnie) reguła "kotwica": co najmniej jedna musi wystąpić
+#   case_sensitive – (opcjonalnie) true = rozróżniaj wielkość liter
+#   name      – (opcjonalnie) czytelna nazwa reguły w raporcie
+#   zakres    – (opcjonalnie) szukaj tylko w pierwszych N znakach tekstu (sygnały z nagłówka dokumentu;
+#               np. odwołanie może cytować w treści orzeczenia KIO "sygn. akt")
+
+global:
+  max_chars: 12000      # analizowany jest początek tekstu (~3 strony) – tam są kluczowe informacje
+  min_margin: 2.0       # minimalna przewaga zwycięskiej klasy nad drugą
+  min_text_chars: 50    # mniej znaków = dokument nieczytelny → negatywny
+
+# Wzorce tolerują typowe błędy OCR, np. zgubione "ł" ([łl]), "Odwohujący".
+
+# Reguły wspólne, odejmowane od KAŻDEJ klasy (typowe dokumenty negatywne).
+common_negative:
+  - name: orzeczenie KIO (sygnatura)
+    pattern: 'Sygn\.\s*akt'
+    weight: -8
+    zakres: 500
+  - name: orzeczenie KIO (sentencja)
+    pattern: '^\s*(orzeka|postanawia)\s*:?\s*$'
+    weight: -6
+    zakres: 3000
+  - name: nagłówek wyroku/postanowienia
+    pattern: '^\s*(WYROK|POSTANOWIENIE)\s*$'
+    case_sensitive: true
+    weight: -4
+    zakres: 500
+  - name: ogłoszenie o zamówieniu (BZP/TED)
+    pattern: '^\s*Ogłoszenie o zamówieniu'
+    weight: -8
+    zakres: 300
+  - name: formularz ogłoszenia (sekcje)
+    pattern: 'SEKCJA\s+I+\s*[-–]'
+    weight: -6
+    zakres: 3000
+  - name: ogłoszenie TED
+    pattern: 'See the notice on TED website|OJ S \d+/\d{4}|Page \d+/\d+'
+    weight: -8
+    zakres: 500
+  - name: ogłoszenie TED (nabywca)
+    pattern: '^\s*Oficjalna nazwa\s*:'
+    weight: -4
+    zakres: 3000
+
+classes:
+
+  odwolanie:
+    min_score: 8
+    rules:
+      - name: tytuł ODWOŁANIE
+        pattern: '^\s*O\s?D\s?W\s?O\s?[ŁL]\s?A\s?N\s?I\s?E\s*$'   # [ŁL] – tolerancja na błąd OCR
+        case_sensitive: true
+        weight: 4
+        required: true
+      - name: sekcja Odwołujący
+        pattern: '^\s*Odwo[łlh]ujący\s*:'
+        weight: 4
+        required: true
+      - name: sekcja Zamawiający
+        pattern: '^\s*Zamawiający\b[^\n]{0,120}:'
+        weight: 2
+      - name: adresat Prezes KIO (linia nagłówka)
+        pattern: '^\s*Prezes Krajowej Izby Odwo[łl]awczej\s*$'
+        weight: 2
+      - name: adres KIO
+        pattern: 'ul\.\s*Postępu\s*17\s*A'
+        weight: 1
+      - name: zarzuty
+        pattern: 'Zarzut\s+nr\s*1'
+        weight: 3
+      - name: wniosek odwołującego
+        pattern: 'wnoszę\s+(odwo[łl]anie|o\b)'
+        weight: 2
+      - name: dotyczy postępowania
+        pattern: '^\s*dotyczy\s*:'
+        weight: 1
+      - name: podstawa prawna (art. 513 Pzp)
+        pattern: 'art\.\s*513'
+        weight: 1
+      - name: wpis od odwołania
+        pattern: 'Wpis od odwo[łl]ania\s*:'
+        weight: 1
+      # sygnały innych klas
+      - name: treść pełnomocnictwa
+        pattern: 'Pe[łl]nomocnictwo przyjmuję'
+        weight: -4
+
+  pelnomocnictwo:
+    min_score: 7
+    rules:
+      - name: tytuł PEŁNOMOCNICTWO
+        pattern: '^\s*P\s?E\s?[ŁL]\s?N\s?O\s?M\s?O\s?C\s?N\s?I\s?C\s?T\s?W\s?O(\s+PROCESOWE)?\s*$'
+        weight: 4
+        required: true
+      - name: udzielenie pełnomocnictwa
+        pattern: '(udziela(m|ją)?\s+pe[łl]nomocnictwa|ustanawiam\s+pełnomocnik|upoważniam\b)'
+        weight: 4
+        required: true
+      - name: mocodawca
+        pattern: 'Mocodawc'
+        weight: 2
+      - name: lista pełnomocników (układ tabelaryczny)
+        pattern: '^\s*Pe[łl]nomocnicy\s+(r\.\s?pr\.|adw\.|radc|adwokat)'
+        weight: 2
+      - name: przyjęcie pełnomocnictwa
+        pattern: 'Pe[łl]nomocnictwo przyjmuję'
+        weight: 2
+      - name: zakres umocowania
+        pattern: '(umocowan|do reprezentowania|zastępowania\s+(Wykonawcy|Mocodawcy))'
+        weight: 1
+      - name: nr wpisu na listę (radca/adwokat)
+        pattern: 'nr wpisu'
+        weight: 2
+      - name: tytuł zawodowy pełnomocnika
+        pattern: '\b(r\.\s?pr\.|adw\.)\s+[A-ZŁŚŻŹĆ]'
+        case_sensitive: true
+        weight: 1
+      # sygnały innych klas
+      - name: zarzuty odwołania
+        pattern: 'Zarzut\s+nr\s*1'
+        weight: -4
+      - name: sekcja Odwołujący
+        pattern: '^\s*Odwo[łlh]ujący\s*:'
+        weight: -3
+
+  przelew:
+    min_score: 7
+    rules:
+      - name: numer rachunku (IBAN / 26 cyfr)
+        pattern: '\b(PL\s?)?\d{2}(\s?\d{4}){6}\b'
+        weight: 3
+        required: true
+      - name: nagłówek potwierdzenia
+        pattern: '(potwierdzenie|polecenie)\s+(realizacji\s+|wykonania\s+)?(polecenia\s+)?(przelewu|transakcji|operacji\s+bankowej)'
+        weight: 4
+      - name: rachunek odbiorcy/nadawcy
+        pattern: '(rachunek\s+(odbiorcy|nadawcy|beneficjenta|obciążany|zleceniodawcy)|z\s+rachunku|na\s+rachunek)'
+        weight: 3
+      - name: strony przelewu
+        pattern: '^\s*(nadawca|odbiorca|beneficjent|zleceniodawca|płatnik|adresat przelewu|dane (nadawcy|odbiorcy))\b'
+        weight: 2
+      - name: kwota
+        pattern: '(kwot[aye]|wartość|kwocie)\b[^\n]{0,60}\d[\d\s]*([.,]\d{2})?'
+        weight: 2
+      - name: data operacji
+        pattern: 'data\s+(operacji|transakcji|realizacji|wykonania)'
+        weight: 1
+      - name: tytuł/opis przelewu
+        pattern: '^\s*(tytuł(\s+przelewu)?|tytułem|opis)\b'
+        weight: 1
+      - name: numer referencyjny transakcji
+        pattern: '(nr\s+ref\.|numer\s+referencyjny|identyfikator\s+operacji|numer\s+transakcji)'
+        weight: 1
+      - name: status realizacji
+        pattern: '(zrealizowan|wykonan[oy]|przelew\s+(krajowy|zwykły))'
+        weight: 1
+      - name: bank
+        pattern: '\bbank'
+        weight: 1
+      # sygnały innych klas
+      - name: zarzuty odwołania
+        pattern: 'Zarzut\s+nr\s*1'
+        weight: -4
+      - name: struktury JPK
+        pattern: 'JPK_'
+        case_sensitive: true
+        weight: -6
