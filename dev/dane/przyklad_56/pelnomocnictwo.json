@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9998339046",
+        "nazwa": "Gorlan Pojazdy sp. z o.o.",
+        "nip": "9994387323",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Natalia Czerwińska"
+        },
+        {
+          "imie_nazwisko": "Norbert Olszewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Iwona Zawadzka",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Kamil Olszewski",
+      "pesel": null
+    }
+  ]
+}

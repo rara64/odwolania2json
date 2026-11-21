@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9994097527",
+        "nazwa": "Zorina Systemy sp. z o.o.",
+        "nip": "9992726100",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Cezary Bartoszewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Dorota Sikorski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Grzegorz Szulc",
+      "pesel": null
+    }
+  ]
+}

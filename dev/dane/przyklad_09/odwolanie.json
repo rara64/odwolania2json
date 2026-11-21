@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-10-28",
+    "czynnosc_dzien": "2026-10-06",
+    "czynnosc_powod_id": 11,
+    "czynnosc_opis": "Opis przedmiotu zamówienia (OPZ)",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996772331",
+      "nazwa": "Iberis Sieci sp. z o.o.",
+      "nip": "9990796243",
+      "regon": "999050100",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Weronika Kaczmarek",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992327454",
+      "nazwa": "Quantis Sieci sp. j.",
+      "nip": "9997080832",
+      "regon": "999057839",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "SWZ.613.2026",
+    "numer_ted": "999923-2026",
+    "tytul": "Dostawa licencji oprogramowania do monitorowania infrastruktury i alarmowej"
+  }
+}

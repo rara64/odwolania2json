@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999360925",
+        "nazwa": "Silvatica Technologie sp. z o.o.",
+        "nip": "9998966348",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Bartosz Zajkowski"
+        },
+        {
+          "imie_nazwisko": "Oliwia Gajewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Jolanta Szulc",
+      "pesel": null
+    }
+  ]
+}

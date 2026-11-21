@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": "Olga Baran",
+        "krs": null,
+        "nazwa": "BOMARK-BUD Olga Baran",
+        "nip": "9996203312",
+        "typ": "osoba_fizyczna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Olga Baran"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Tadeusz Nowak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Grażyna Zielińska",
+      "pesel": null
+    }
+  ]
+}

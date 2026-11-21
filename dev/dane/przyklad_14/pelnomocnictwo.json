@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996902468",
+        "nazwa": "Opalit Serwis sp. k.",
+        "nip": "9992251714",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Zbigniew Dobrowolski"
+        },
+        {
+          "imie_nazwisko": "Marek Rutkiewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Patrycja Bartoszewicz",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Aleksandra Gajewicz",
+      "pesel": null
+    }
+  ]
+}

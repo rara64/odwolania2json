@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-01-12",
+    "czynnosc_powod_id": 2,
+    "czynnosc_opis": "Ogłoszenie wyboru oferty",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9998008097",
+      "nazwa": "Fenrix Technologie S.A.",
+      "nip": "9991582308",
+      "regon": "999759441",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Kaczmark",
+        "nazwa": "Kancelaria Adwokacka i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9994294850",
+      "nazwa": "Centaur Wyposażenie S.A.",
+      "nip": "9998503335",
+      "regon": "999187460",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999596",
+    "numer_postepowania": "SWZ.896.2026",
+    "numer_ted": "999779-2026",
+    "tytul": "Dostawa materiałów eksploatacyjnych do urządzeń biurowych"
+  }
+}

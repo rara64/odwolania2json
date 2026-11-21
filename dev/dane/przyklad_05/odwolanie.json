@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-11-09",
+    "czynnosc_dzien": "2026-10-25",
+    "czynnosc_powod_id": 7,
+    "czynnosc_opis": "Zaniechanie odrzucenia oferty",
+    "miejscowosc": "Lublin"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999511966",
+      "nazwa": "Corvantis Wyposażenie sp. z o.o.",
+      "nip": "9997553319",
+      "regon": "999630380",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Ignacy Sadowski",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9997034296",
+      "nazwa": "Belmoria Automatyka S.A.",
+      "nip": "9996379405",
+      "regon": "999454776",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999392",
+    "numer_postepowania": "SWZ.780.2026",
+    "numer_ted": "999475-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

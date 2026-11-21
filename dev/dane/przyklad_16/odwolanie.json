@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-22",
+    "czynnosc_dzien": "2026-08-11",
+    "czynnosc_powod_id": 3,
+    "czynnosc_opis": "Decyzja o wykluczeniu wykonawcy",
+    "miejscowosc": "Warszawa"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995891101",
+      "nazwa": "Umbria Serwis S.A.",
+      "nip": "9994524790",
+      "regon": "999556867",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Szymanski",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@poczta.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998340863",
+      "nazwa": "Ypsilon Usługi sp. k.",
+      "nip": "9998078300",
+      "regon": "999191360",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "DI.906.2026",
+    "numer_ted": "999559-2026",
+    "tytul": "Świadczenie usług pocztowych i kurierskich na potrzeby urzędu"
+  }
+}

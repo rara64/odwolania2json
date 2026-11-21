@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9994481774",
+        "nazwa": "Belmoria Technologie sp. j.",
+        "nip": "9998805059",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Jolanta Dobrowolski"
+        },
+        {
+          "imie_nazwisko": "Ignacy Cieślak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Halina Niedźwiecki",
+      "pesel": null
+    }
+  ]
+}

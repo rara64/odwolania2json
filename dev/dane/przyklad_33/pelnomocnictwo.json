@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9998008097",
+        "nazwa": "Fenrix Technologie S.A.",
+        "nip": "9991582308",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Klaudia Bartoszewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Cezary Kaczmark",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Sławomir Sadowski",
+      "pesel": null
+    }
+  ]
+}

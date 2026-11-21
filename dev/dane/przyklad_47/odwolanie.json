@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-28",
+    "czynnosc_dzien": "2026-08-23",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Poznań"
+  },
+  "Odwolujacy": [
+    {
+      "krs": null,
+      "nazwa": "RAVELO-BUD Sebastian Tomaszewski",
+      "nip": "9997975723",
+      "regon": "999544334",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Elżbieta Woźniak",
+        "nazwa": "Kancelaria Radcy Prawnego Elżbieta Woźniak",
+        "mail": "kontakt@wozniakkancelaria.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998553316",
+      "nazwa": "Miejskie Przedsiębiorstwo Komunikacyjne w Pogorzeli Wielkiej sp. z o.o.",
+      "nip": "9994443606",
+      "regon": "999257689",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999143",
+    "numer_postepowania": "ZP.271/130/2026",
+    "numer_ted": "999583-2026",
+    "tytul": "Świadczenie usług przewozu uczniów do szkół w roku szkolnym 2026/2027"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-02-20",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9994481774",
+      "nazwa": "Belmoria Technologie sp. j.",
+      "nip": "9998805059",
+      "regon": "999647305",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Halina Niedźwiecki",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@sekretariat.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9995815812",
+      "nazwa": "Corvantis Serwis sp. k.",
+      "nip": "9998984352",
+      "regon": "999756827",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999441",
+    "numer_postepowania": "DI.106.2026",
+    "numer_ted": "999032-2026",
+    "tytul": "Dostawa licencji oprogramowania do monitorowania infrastruktury i alarmowej"
+  }
+}

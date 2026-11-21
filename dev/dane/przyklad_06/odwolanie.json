@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-06-27",
+    "czynnosc_dzien": "2026-06-03",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Bydgoszcz"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999360925",
+      "nazwa": "Silvatica Technologie sp. z o.o.",
+      "nip": "9998966348",
+      "regon": "999450212",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Jolanta Szulc",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9995664683",
+      "nazwa": "Aurelink Sieci sp. k.",
+      "nip": "9993074480",
+      "regon": "999279238",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "DI.579.2026",
+    "numer_ted": "999687-2026",
+    "tytul": "Świadczenie usług pocztowych i kurierskich na potrzeby urzędu"
+  }
+}

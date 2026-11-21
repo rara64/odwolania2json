@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995695391",
+        "nazwa": "Rubiconis Automatyka sp. k.",
+        "nip": "9997232058",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Oliwia Lipowczyk"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Klaudia Szymanski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Norbert Sadowski",
+      "pesel": null
+    }
+  ]
+}

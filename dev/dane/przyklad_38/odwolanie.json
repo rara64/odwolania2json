@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-12",
+    "czynnosc_dzien": "2026-07-22",
+    "czynnosc_powod_id": 11,
+    "czynnosc_opis": "Opis przedmiotu zamówienia (OPZ)",
+    "miejscowosc": "Łódź"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9992992231",
+      "nazwa": "Granitix Usługi S.A.",
+      "nip": "9993373158",
+      "regon": "999402472",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Oliwia Wierzbicka",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@sekretariat.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998396331",
+      "nazwa": "Umbria Automatyka sp. z o.o.",
+      "nip": "9990955300",
+      "regon": "999022723",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999641",
+    "numer_postepowania": "SWZ.702.2026",
+    "numer_ted": "999836-2026",
+    "tytul": "Dostawa wyposażenia pomieszczeń biurowych oraz elementów wyposażenia architektonicznego"
+  }
+}

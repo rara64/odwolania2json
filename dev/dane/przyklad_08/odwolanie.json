@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-06-05",
+    "czynnosc_dzien": "2026-05-25",
+    "czynnosc_powod_id": 5,
+    "czynnosc_opis": "Modyfikacja treści SWZ",
+    "miejscowosc": "Rzeszów"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9997927279",
+      "nazwa": "Umbria Rozwiązania sp. j.",
+      "nip": "9990600725",
+      "regon": "999424597",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Bartosz Jastrzębski",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9999495942",
+      "nazwa": "Corvella Sieci sp. k.",
+      "nip": "9997193358",
+      "regon": "999209545",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999955",
+    "numer_postepowania": "ZS.158.2026",
+    "numer_ted": "999211-2026",
+    "tytul": "Dostawa i wdrożenie oprogramowania do obsługi dokumentacji wraz z serwisem wsparcia technicznego"
+  }
+}

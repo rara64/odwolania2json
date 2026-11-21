@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9997854723",
+        "nazwa": "Corvella Serwis sp. k.",
+        "nip": "9995776771",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Aleksandra Chmielewski"
+        },
+        {
+          "imie_nazwisko": "Weronika Cieślak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Ewa Chalupowicz",
+      "pesel": null
+    }
+  ]
+}

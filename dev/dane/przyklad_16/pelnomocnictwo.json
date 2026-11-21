@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995891101",
+        "nazwa": "Umbria Serwis S.A.",
+        "nip": "9994524790",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Marek Dobrowolski"
+        },
+        {
+          "imie_nazwisko": "Ryszard Biernacki"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Cezary Szymanski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Patrycja Bąkiewicz",
+      "pesel": null
+    }
+  ]
+}

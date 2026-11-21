@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": "Jarosław Dudek",
+        "krs": null,
+        "nazwa": "DUDEK-TECH Jarosław Dudek",
+        "nip": "9994150873",
+        "typ": "osoba_fizyczna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Jarosław Dudek"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Natalia Górecka",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Łukasz Sikora",
+      "pesel": null
+    }
+  ]
+}

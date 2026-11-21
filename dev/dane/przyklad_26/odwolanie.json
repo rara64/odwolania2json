@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-06-18",
+    "czynnosc_dzien": "2026-06-06",
+    "czynnosc_powod_id": 3,
+    "czynnosc_opis": "Decyzja o wykluczeniu wykonawcy",
+    "miejscowosc": "Wrocław"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999035670",
+      "nazwa": "Uldaris Wyposażenie sp. j.",
+      "nip": "9997688539",
+      "regon": "999200202",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Ryszard Mazurkiewicz",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@sekretariat.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992686270",
+      "nazwa": "Orynte Konsulting sp. k.",
+      "nip": "9996050065",
+      "regon": "999532157",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "ZP.864.2026",
+    "numer_ted": "999222-2026",
+    "tytul": "Świadczenie usług sprzątania pomieszczeń biurowych"
+  }
+}

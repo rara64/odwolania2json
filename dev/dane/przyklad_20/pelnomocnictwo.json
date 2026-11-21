@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996429969",
+        "nazwa": "Quentavis Usługi sp. z o.o.",
+        "nip": "9992111166",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sławomir Dudek"
+        },
+        {
+          "imie_nazwisko": "Sławomir Mazurkiewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Aleksandra Wierzbicka",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Jolanta Najder",
+      "pesel": null
+    }
+  ]
+}

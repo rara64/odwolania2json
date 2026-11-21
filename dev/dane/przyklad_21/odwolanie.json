@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-04-04",
+    "czynnosc_dzien": "2026-03-20",
+    "czynnosc_powod_id": 7,
+    "czynnosc_opis": "Zaniechanie odrzucenia oferty",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9991500432",
+      "nazwa": "Corvella Rozwiązania S.A.",
+      "nip": "9990271196",
+      "regon": "999066287",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Marek Sikorski",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9993301211",
+      "nazwa": "Jantara Wyposażenie sp. k.",
+      "nip": "9995897747",
+      "regon": "999055622",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999180",
+    "numer_postepowania": "SWZ.429.2026",
+    "numer_ted": "999431-2026",
+    "tytul": "Zakup i dostawa sprzętu komputerowego wraz z oprogramowaniem oraz usługą wdrożenia"
+  }
+}

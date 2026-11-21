@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9990428468",
+        "nazwa": "Balttec Infrastruktura S.A.",
+        "nip": "9995059584",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Grzegorz Bąkiewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Dorota Zawadzki",
+      "pesel": null
+    }
+  ]
+}

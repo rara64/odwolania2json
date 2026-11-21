@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-09-07",
+    "czynnosc_dzien": "2026-08-28",
+    "czynnosc_powod_id": 5,
+    "czynnosc_opis": "Modyfikacja treści SWZ",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999233530",
+      "nazwa": "Helvix Eko-Serwis sp.k.",
+      "nip": "9995558958",
+      "regon": "999054443",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Bartosz Rutkowski",
+        "nazwa": "Rutkowski i Bąk Kancelaria Prawna sp.k.",
+        "mail": "biuro@rutkowskikancelaria.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9999865519",
+      "nazwa": "Zakład Gospodarki Komunalnej w Wrzosowie sp. z o.o.",
+      "nip": "9992432443",
+      "regon": "999221683",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999740",
+    "numer_postepowania": "SZP-46/2026",
+    "numer_ted": "999599-2026",
+    "tytul": "Prowadzenie Punktu Selektywnej Zbiórki Odpadów Komunalnych w latach 2027–2029"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-04-04",
+    "czynnosc_powod_id": 5,
+    "czynnosc_opis": "Modyfikacja treści SWZ",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9997060431",
+      "nazwa": "Yldenia Sieci S.A.",
+      "nip": "9997550083",
+      "regon": "999670741",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Zbigniew Dobrowolski",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996208666",
+      "nazwa": "Uldaris Usługi sp. z o.o.",
+      "nip": "9991994577",
+      "regon": "999602656",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999010",
+    "numer_postepowania": "SWZ.668.2026",
+    "numer_ted": null,
+    "tytul": "Dostawa wyposażenia pomieszczeń biurowych oraz elementów wyposażenia architektonicznego"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999233530",
+        "nazwa": "Helvix Eko-Serwis sp.k.",
+        "nip": "9995558958",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Teresa Sadowska"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9998728887",
+        "nazwa": "Nexalia Środowisko S.A.",
+        "nip": "9996504966",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Paweł Wieczorek"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Bartosz Rutkowski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Olga Bąk",
+      "pesel": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9994387983",
+        "nazwa": "Xenonix Technologie S.A.",
+        "nip": "9995704079",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Weronika Sikorski"
+        },
+        {
+          "imie_nazwisko": "Grzegorz Borkowski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Aleksandra Bartoszewicz",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Halina Różański",
+      "pesel": null
+    }
+  ]
+}

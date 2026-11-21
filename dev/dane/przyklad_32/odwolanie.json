@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-08",
+    "czynnosc_dzien": "2026-07-24",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Poznań"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996203344",
+      "nazwa": "Centaur Usługi sp. z o.o.",
+      "nip": "9996658849",
+      "regon": "999413872",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Marciniak",
+        "nazwa": "Kancelaria Radców Prawnych i Partnerzy",
+        "mail": "biuro@poczta.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996418450",
+      "nazwa": "Elarion Technologie sp. z o.o.",
+      "nip": "9996764238",
+      "regon": "999940293",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999809",
+    "numer_postepowania": "ZS.520.2026",
+    "numer_ted": null,
+    "tytul": "Dostawa i wdrożenie oprogramowania do obsługi dokumentacji wraz z serwisem wsparcia technicznego"
+  }
+}

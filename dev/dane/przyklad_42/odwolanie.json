@@ -1,0 +1,45 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-07-02",
+    "czynnosc_dzien": "2026-06-23",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9993307745",
+      "nazwa": "Nordelia Facility Services S.A.",
+      "nip": "9995519382",
+      "regon": "999284670",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Joanna Stępień",
+        "nazwa": "Stępień Borkowski Kancelaria Prawna sp.p.",
+        "mail": "sekretariat@sbkancelaria.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9991840562",
+      "nazwa": "Małopolskie Centrum Logistyki Medycznej sp. z o.o.",
+      "nip": "9998802341",
+      "regon": "999015873",
+      "prowadzacy_postepowanie": 1
+    },
+    {
+      "krs": "9996035218",
+      "nazwa": "Krakowskie Zakłady Komunalne S.A.",
+      "nip": "9990457736",
+      "regon": "999762149",
+      "prowadzacy_postepowanie": 0
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999263",
+    "numer_postepowania": "MCLM/ZP/07/2026",
+    "numer_ted": null,
+    "tytul": "Kompleksowe usługi utrzymania czystości, ochrony fizycznej i obsługi technicznej obiektów Zamawiających w latach 2026–2029"
+  }
+}

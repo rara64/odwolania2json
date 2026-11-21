@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": "Sebastian Tomaszewski",
+        "krs": null,
+        "nazwa": "RAVELO-BUD Sebastian Tomaszewski",
+        "nip": "9997975723",
+        "typ": "osoba_fizyczna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sebastian Tomaszewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Elżbieta Woźniak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Iwona Kucharska",
+      "pesel": null
+    }
+  ]
+}

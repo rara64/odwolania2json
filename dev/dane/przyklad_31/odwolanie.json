@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-04-09",
+    "czynnosc_dzien": "2026-03-27",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9997648224",
+      "nazwa": "Zorina Rozwiązania S.A.",
+      "nip": "9996669445",
+      "regon": "999481164",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Halina Ostrowczyk",
+        "nazwa": "Kancelaria Adwokacka i Partnerzy",
+        "mail": "biuro@poczta.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996153090",
+      "nazwa": "Balttec Rozwiązania sp. z o.o.",
+      "nip": "9991086101",
+      "regon": "999948691",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999719/04",
+    "numer_postepowania": "ZS.568.2026",
+    "numer_ted": "999344-2026",
+    "tytul": "Świadczenie usług pocztowych i kurierskich na potrzeby urzędu"
+  }
+}

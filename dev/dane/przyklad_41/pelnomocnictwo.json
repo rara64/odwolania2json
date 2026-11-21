@@ -1,0 +1,41 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995540127",
+        "nazwa": "Torvex Budownictwo sp. z o.o.",
+        "nip": "9992284611",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Marek Domański"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9997108834",
+        "nazwa": "Hydromel Instalacje sp.j.",
+        "nip": "9994417025",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Agnieszka Kurek"
+        },
+        {
+          "imie_nazwisko": "Robert Kurek"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Piotr Zalewski",
+      "pesel": null
+    }
+  ]
+}

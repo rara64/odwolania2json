@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-07-15",
+    "czynnosc_dzien": "2026-07-03",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Warszawa"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999063951",
+      "nazwa": "Zarendel Automatyka sp. j.",
+      "nip": "9995283985",
+      "regon": "999485311",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Walczak",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9993983774",
+      "nazwa": "Ilystera Automatyka sp. k.",
+      "nip": "9992131944",
+      "regon": "999136289",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999042",
+    "numer_postepowania": "ZP.388.2026",
+    "numer_ted": null,
+    "tytul": "Zakup i dostawa systemów telematycznych do obsługi zgłoszeń obywateli"
+  }
+}

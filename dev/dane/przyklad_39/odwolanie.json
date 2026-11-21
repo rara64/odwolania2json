@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-01-07",
+    "czynnosc_dzien": "2025-12-26",
+    "czynnosc_powod_id": 3,
+    "czynnosc_opis": "Decyzja o wykluczeniu wykonawcy",
+    "miejscowosc": "Wrocław"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9994387983",
+      "nazwa": "Xenonix Technologie S.A.",
+      "nip": "9995704079",
+      "regon": "999094645",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Aleksandra Bartoszewicz",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998630653",
+      "nazwa": "Corvella Systemy sp. z o.o.",
+      "nip": "9999959400",
+      "regon": "999596559",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999369",
+    "numer_postepowania": "ZS.550.2026",
+    "numer_ted": null,
+    "tytul": "Świadczenie usług sprzątania pomieszczeń biurowych"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996254380",
+        "nazwa": "Baltorix Dostawy Medyczne sp. z o.o. sp.k.",
+        "nip": "9998701536",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Grzegorz Malinowski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Aleksander Kubiak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Weronika Jabłońska",
+      "pesel": null
+    }
+  ]
+}

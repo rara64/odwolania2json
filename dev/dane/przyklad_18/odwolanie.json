@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-28",
+    "czynnosc_dzien": "2026-08-11",
+    "czynnosc_powod_id": 1,
+    "czynnosc_opis": "Decyzja o odrzuceniu oferty",
+    "miejscowosc": "Katowice"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9990428468",
+      "nazwa": "Balttec Infrastruktura S.A.",
+      "nip": "9995059584",
+      "regon": "999728771",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Dorota Zawadzki",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9991751879",
+      "nazwa": "Xenonix Sieci sp. j.",
+      "nip": "9993962707",
+      "regon": "999024567",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999497/03",
+    "numer_postepowania": "DI.908.2026",
+    "numer_ted": "999124-2026",
+    "tytul": "Świadczenie usług pocztowych i kurierskich na potrzeby urzędu"
+  }
+}

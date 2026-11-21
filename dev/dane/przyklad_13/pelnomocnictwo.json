@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9990929624",
+        "nazwa": "Deltawing Usługi sp. j.",
+        "nip": "9994888947",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Oliwia Górnicki"
+        },
+        {
+          "imie_nazwisko": "Jolanta Kaczmarek"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Ignacy Rutkiewicz",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Weronika Furman",
+      "pesel": null
+    }
+  ]
+}

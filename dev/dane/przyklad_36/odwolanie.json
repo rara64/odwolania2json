@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-01-23",
+    "czynnosc_powod_id": 11,
+    "czynnosc_opis": "Opis przedmiotu zamówienia (OPZ)",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995831483",
+      "nazwa": "Rubiconis Technologie S.A.",
+      "nip": "9998174794",
+      "regon": "999481460",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Dorota Siedlecki",
+        "nazwa": "Kancelaria Prawna Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9991219631",
+      "nazwa": "Rubiconis Technologie sp. z o.o.",
+      "nip": "9997495013",
+      "regon": "999604307",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999063",
+    "numer_postepowania": "SWZ.120.2026",
+    "numer_ted": "999477-2026",
+    "tytul": "Dostawa licencji oprogramowania do monitorowania infrastruktury i alarmowej"
+  }
+}

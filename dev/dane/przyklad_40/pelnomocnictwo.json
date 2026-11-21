@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9998213547",
+        "nazwa": "Valtrix Systemy Informatyczne sp. z o.o.",
+        "nip": "9993380162",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Krzysztof Nowicki"
+        },
+        {
+          "imie_nazwisko": "Ewa Lis"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Magdalena Wróblewska",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Tomasz Kędzierski",
+      "pesel": null
+    }
+  ]
+}

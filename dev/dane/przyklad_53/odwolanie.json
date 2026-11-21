@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-12",
+    "czynnosc_dzien": "2026-08-02",
+    "czynnosc_powod_id": 3,
+    "czynnosc_opis": "Decyzja o wykluczeniu wykonawcy",
+    "miejscowosc": "Olsztyn"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996858325",
+      "nazwa": "Vellum Facility sp. z o.o. sp.k.",
+      "nip": "9999762610",
+      "regon": "999467718",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Celina Ostrowska",
+        "nazwa": "Kancelaria Prawa Zamówień Publicznych Ostrowska Piotrowska s.c.",
+        "mail": "kancelaria@ostrowskakancelaria.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9995350331",
+      "nazwa": "Zakład Usług Komunalnych w Zalesiu Królewskim sp. z o.o.",
+      "nip": "9991216707",
+      "regon": "999633654",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "ZP.26.2026",
+    "numer_ted": "999337-2026",
+    "tytul": "Usługa ochrony osób i mienia w obiektach Zamawiającego w latach 2026–2028"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-03-18",
+    "czynnosc_dzien": "2026-03-09",
+    "czynnosc_powod_id": 6,
+    "czynnosc_opis": "Odpowiedzi i wyjaśnienia do SWZ",
+    "miejscowosc": "Lublin"
+  },
+  "Odwolujacy": [
+    {
+      "krs": null,
+      "nazwa": "DUDEK-TECH Jarosław Dudek",
+      "nip": "9994150873",
+      "regon": "999603218",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Natalia Górecka",
+        "nazwa": "Kancelaria Adwokacka Górecka Sikora s.c.",
+        "mail": "kancelaria@goreckasikora.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9995721046",
+      "nazwa": "Lubelskie Przedsiębiorstwo Wodociągów i Kanalizacji sp. z o.o.",
+      "nip": "9991184529",
+      "regon": "999437085",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999731",
+    "numer_postepowania": "LPWiK/ZP/2026/09",
+    "numer_ted": null,
+    "tytul": "Dostawa i wdrożenie systemu telemetrii i monitoringu sieci wodociągowej wraz z dostawą przepływomierzy elektromagnetycznych"
+  }
+}

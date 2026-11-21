@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996772331",
+        "nazwa": "Iberis Sieci sp. z o.o.",
+        "nip": "9990796243",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Dorota Borkowski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Weronika Kaczmarek",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Weronika Chmielewski",
+      "pesel": null
+    }
+  ]
+}

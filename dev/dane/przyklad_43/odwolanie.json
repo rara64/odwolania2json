@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-05-14",
+    "czynnosc_dzien": "2026-05-05",
+    "czynnosc_powod_id": 3,
+    "czynnosc_opis": "Decyzja o wykluczeniu wykonawcy",
+    "miejscowosc": "Wrocław"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9992671408",
+      "nazwa": "Elmontex Energetyka sp. z o.o.",
+      "nip": "9996380214",
+      "regon": "999528307",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Katarzyna Michalak",
+        "nazwa": "Michalak Legal Kancelaria Radcy Prawnego",
+        "mail": "k.michalak@michalaklegal.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9990983326",
+      "nazwa": "Dolnośląskie Sieci Ciepłownicze S.A.",
+      "nip": "9993067418",
+      "regon": "999140592",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999846",
+    "numer_postepowania": "DSC/PN/2026/011",
+    "numer_ted": "999408-2026",
+    "tytul": "Modernizacja sieci ciepłowniczej wraz z budową węzłów cieplnych w rejonie ulic Hallera i Powstańców Śląskich we Wrocławiu"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-09-08",
+    "czynnosc_powod_id": 2,
+    "czynnosc_opis": "Ogłoszenie wyboru oferty",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9992842505",
+      "nazwa": "Galdaris Technologie sp. k.",
+      "nip": "9993885533",
+      "regon": "999308916",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Marek Jabłoński",
+        "nazwa": "Kancelaria Adwokacka i Partnerzy",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996808116",
+      "nazwa": "Wexoria Systemy sp. z o.o.",
+      "nip": "9998978660",
+      "regon": "999331453",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999139",
+    "numer_postepowania": "ZP.869.2026",
+    "numer_ted": "999808-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

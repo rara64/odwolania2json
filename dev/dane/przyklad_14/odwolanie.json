@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-01",
+    "czynnosc_dzien": "2026-07-11",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": "Gdańsk"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996902468",
+      "nazwa": "Opalit Serwis sp. k.",
+      "nip": "9992251714",
+      "regon": "999950475",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Patrycja Bartoszewicz",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998459407",
+      "nazwa": "Opalit Wyposażenie S.A.",
+      "nip": "9997564636",
+      "regon": "999247630",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999107",
+    "numer_postepowania": "ZP.621.2026",
+    "numer_ted": "999639-2026",
+    "tytul": "Dostawa i wdrożenie oprogramowania do obsługi dokumentacji wraz z serwisem wsparcia technicznego"
+  }
+}

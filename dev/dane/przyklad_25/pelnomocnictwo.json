@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9991240860",
+        "nazwa": "Belmoria Systemy S.A.",
+        "nip": "9992160970",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Patrycja Głowacz"
+        },
+        {
+          "imie_nazwisko": "Oliwia Jabłończyk"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Zbigniew Górnicki",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Zbigniew Szymanski",
+      "pesel": null
+    }
+  ]
+}

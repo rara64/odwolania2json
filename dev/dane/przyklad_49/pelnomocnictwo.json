@@ -1,0 +1,45 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9998920417",
+        "nazwa": "Altrona Farmacja sp.k.",
+        "nip": "9994895854",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Iwona Rutkowska"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996965616",
+        "nazwa": "Polvent Aparatura Medyczna sp. z o.o.",
+        "nip": "9994023484",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sebastian Adamczyk"
+        },
+        {
+          "imie_nazwisko": "Damian Tomaszewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Cezary Sikorski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Igor Majewski",
+      "pesel": null
+    }
+  ]
+}

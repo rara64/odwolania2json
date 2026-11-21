@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-05-06",
+    "czynnosc_powod_id": 6,
+    "czynnosc_opis": "Odpowiedzi i wyjaśnienia do SWZ",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996527940",
+      "nazwa": "Holdex Dystrybucja Medyczna sp. z o.o.",
+      "nip": "9998884068",
+      "regon": "999881092",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Renata Kowalczyk",
+        "nazwa": "Kowalczyk Legal Kancelaria Radców Prawnych sp. z o.o.",
+        "mail": "sekretariat@kowalczyk.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9994890373",
+      "nazwa": "Szpital Specjalistyczny im. Jana Pawła II w Brzozówce",
+      "nip": "9994537600",
+      "regon": "999255628",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999283",
+    "numer_postepowania": "IR.271-35/2026",
+    "numer_ted": "999493-2026",
+    "tytul": "Sukcesywna dostawa produktów leczniczych w podziale na 12 pakietów"
+  }
+}

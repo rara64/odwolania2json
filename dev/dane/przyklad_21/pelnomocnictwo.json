@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9991500432",
+        "nazwa": "Corvella Rozwiązania S.A.",
+        "nip": "9990271196",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Zbigniew Lewandowski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Marek Sikorski",
+      "pesel": null
+    }
+  ]
+}

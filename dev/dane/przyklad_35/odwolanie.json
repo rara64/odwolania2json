@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-03-03",
+    "czynnosc_dzien": "2026-02-20",
+    "czynnosc_powod_id": 10,
+    "czynnosc_opis": "Zaniechanie unieważnienia postępowania",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995695391",
+      "nazwa": "Rubiconis Automatyka sp. k.",
+      "nip": "9997232058",
+      "regon": "999347550",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Klaudia Szymanski",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996938193",
+      "nazwa": "Iberis Technologie sp. k.",
+      "nip": "9993835096",
+      "regon": "999419343",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999837",
+    "numer_postepowania": "ZP.169.2026",
+    "numer_ted": "999000-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

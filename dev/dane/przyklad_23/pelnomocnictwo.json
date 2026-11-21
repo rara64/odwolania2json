@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996325136",
+        "nazwa": "Wexford Systemy sp. z o.o.",
+        "nip": "9991432253",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Ryszard Dobrowolski"
+        },
+        {
+          "imie_nazwisko": "Norbert Chalupowicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Halina Walczak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Bartosz Bartoszewicz",
+      "pesel": null
+    }
+  ]
+}

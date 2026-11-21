@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996203344",
+        "nazwa": "Centaur Usługi sp. z o.o.",
+        "nip": "9996658849",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Ignacy Siedlecki"
+        },
+        {
+          "imie_nazwisko": "Norbert Głowacz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Cezary Marciniak",
+      "pesel": null
+    }
+  ]
+}

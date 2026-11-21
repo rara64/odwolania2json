@@ -1,0 +1,41 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9994245738",
+        "nazwa": "Norvia Ciepłownictwo sp. z o.o. sp.k.",
+        "nip": "9990838738",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Bartosz Urbański"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995876775",
+        "nazwa": "Eltrona Instalacje Energetyczne sp. z o.o.",
+        "nip": "9998343705",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Tadeusz Kucharski"
+        },
+        {
+          "imie_nazwisko": "Paweł Olszewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Rafał Pawłowski",
+      "pesel": null
+    }
+  ]
+}

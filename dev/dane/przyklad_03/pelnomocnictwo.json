@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9991877493",
+        "nazwa": "Silvatica Automatyka sp. k.",
+        "nip": "9995501241",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sławomir Jabłoński"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Norbert Szulc",
+      "pesel": null
+    }
+  ]
+}

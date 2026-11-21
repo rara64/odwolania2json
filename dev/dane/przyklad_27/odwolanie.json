@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-11-12",
+    "czynnosc_dzien": "2026-10-27",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Wrocław"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995046546",
+      "nazwa": "Ilyrion Sieci sp. j.",
+      "nip": "9997585897",
+      "regon": "999917510",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Aleksandra Jabłończyk",
+        "nazwa": "Kancelaria Prawna Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992446832",
+      "nazwa": "Kadmos Systemy sp. k.",
+      "nip": "9998081160",
+      "regon": "999915958",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "SWZ.716.2026",
+    "numer_ted": "999918-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

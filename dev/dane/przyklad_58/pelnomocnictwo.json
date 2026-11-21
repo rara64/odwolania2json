@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995522683",
+        "nazwa": "Imperon Serwis sp. z o.o.",
+        "nip": "9993124780",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sebastian Baran"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Grzegorz Wiśniewski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Leszek Wieczorek",
+      "pesel": null
+    }
+  ]
+}

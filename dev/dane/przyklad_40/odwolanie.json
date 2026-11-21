@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-10-19",
+    "czynnosc_dzien": "2026-10-09",
+    "czynnosc_powod_id": 2,
+    "czynnosc_opis": "Ogłoszenie wyboru oferty",
+    "miejscowosc": "Poznań"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9998213547",
+      "nazwa": "Valtrix Systemy Informatyczne sp. z o.o.",
+      "nip": "9993380162",
+      "regon": "999517204",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Magdalena Wróblewska",
+        "nazwa": "Kancelaria Radców Prawnych Wróblewska i Wspólnicy sp.k.",
+        "mail": "kancelaria@wroblewska.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9994470318",
+      "nazwa": "Regionalne Centrum Usług Medycznych sp. z o.o.",
+      "nip": "9991723094",
+      "regon": "999806551",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999412",
+    "numer_postepowania": "ZP/PN/48/2026",
+    "numer_ted": "999584-2026",
+    "tytul": "Dostawa, instalacja i konfiguracja zintegrowanego systemu informatycznego klasy HIS wraz ze świadczeniem usług serwisu pogwarancyjnego przez okres 36 miesięcy"
+  }
+}

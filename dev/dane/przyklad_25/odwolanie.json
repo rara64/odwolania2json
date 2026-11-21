@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-06-27",
+    "czynnosc_dzien": "2026-06-03",
+    "czynnosc_powod_id": 6,
+    "czynnosc_opis": "Odpowiedzi i wyjaśnienia do SWZ",
+    "miejscowosc": "Warszawa"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9991240860",
+      "nazwa": "Belmoria Systemy S.A.",
+      "nip": "9992160970",
+      "regon": "999702501",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Zbigniew Górnicki",
+        "nazwa": "Kancelaria Prawna Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9996391409",
+      "nazwa": "Faronis Konsulting sp. k.",
+      "nip": "9996638835",
+      "regon": "999758909",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999453",
+    "numer_postepowania": "SWZ.189.2026",
+    "numer_ted": null,
+    "tytul": "Dostawa materiałów eksploatacyjnych do urządzeń biurowych"
+  }
+}

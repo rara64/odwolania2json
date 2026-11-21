@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-10-11",
+    "czynnosc_dzien": "2026-09-25",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Gdańsk"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9998577437",
+      "nazwa": "Meridian Konsulting sp. j.",
+      "nip": "9992049237",
+      "regon": "999851916",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Patrycja Rutkiewicz",
+        "nazwa": "Kancelaria Radców Prawnych i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992290948",
+      "nazwa": "Uldaris Systemy sp. j.",
+      "nip": "9998031630",
+      "regon": "999107260",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999489",
+    "numer_postepowania": "ZP.856.2026",
+    "numer_ted": "999328-2026",
+    "tytul": "Dostawa licencji oprogramowania do monitorowania infrastruktury i alarmowej"
+  }
+}

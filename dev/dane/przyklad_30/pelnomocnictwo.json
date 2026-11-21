@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999145542",
+        "nazwa": "Kadmos Rozwiązania sp. k.",
+        "nip": "9991006421",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Sławomir Wierzbicki"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Grzegorz Rutkiewicz",
+      "pesel": null
+    }
+  ]
+}

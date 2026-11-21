@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999008184",
+        "nazwa": "Kavendis Infrastruktura sp. z o.o.",
+        "nip": "9999892540",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Halina Bartoszewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Norbert Milewski",
+      "pesel": null
+    }
+  ]
+}

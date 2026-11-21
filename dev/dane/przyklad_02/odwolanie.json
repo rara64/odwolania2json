@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-09-03",
+    "czynnosc_dzien": "2026-08-22",
+    "czynnosc_powod_id": 1,
+    "czynnosc_opis": "Decyzja o odrzuceniu oferty",
+    "miejscowosc": "Gdańsk"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999669444",
+      "nazwa": "Hartica Serwis S.A.",
+      "nip": "9990678035",
+      "regon": "999114017",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Bartosz Szymanski",
+        "nazwa": "Kancelaria Adwokacka i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9993122884",
+      "nazwa": "Eurosept Infrastruktura S.A.",
+      "nip": "9996097888",
+      "regon": "999725710",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "ZP.431.2026",
+    "numer_ted": "999073-2026",
+    "tytul": "Dostawa materiałów eksploatacyjnych do urządzeń biurowych"
+  }
+}

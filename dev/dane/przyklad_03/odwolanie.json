@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-03-02",
+    "czynnosc_dzien": "2026-02-16",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Bydgoszcz"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9991877493",
+      "nazwa": "Silvatica Automatyka sp. k.",
+      "nip": "9995501241",
+      "regon": "999302380",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Norbert Szulc",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9999176757",
+      "nazwa": "Lunareth Automatyka sp. z o.o.",
+      "nip": "9997945568",
+      "regon": "999298856",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999555",
+    "numer_postepowania": "ZP.154.2026",
+    "numer_ted": "999414-2026",
+    "tytul": "Dostawa i wdrożenie oprogramowania do obsługi dokumentacji wraz z serwisem wsparcia technicznego"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9993682204",
+        "nazwa": "Belmoria Systemy sp. j.",
+        "nip": "9999142626",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Marek Nowakowicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Ryszard Lipowczyk",
+      "pesel": null
+    }
+  ]
+}

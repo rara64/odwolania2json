@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9993307745",
+        "nazwa": "Nordelia Facility Services S.A.",
+        "nip": "9995519382",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Dariusz Pietrzak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Joanna Stępień",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Michał Borkowski",
+      "pesel": null
+    }
+  ]
+}

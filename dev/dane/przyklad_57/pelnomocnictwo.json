@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999271101",
+        "nazwa": "Lantis Aparatura Medyczna sp.j.",
+        "nip": "9999915346",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Tadeusz Szymański"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Barbara Włodarczyk",
+      "pesel": null
+    }
+  ]
+}

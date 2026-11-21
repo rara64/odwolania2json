@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-04-25",
+    "czynnosc_powod_id": 6,
+    "czynnosc_opis": "Odpowiedzi i wyjaśnienia do SWZ",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9997939273",
+      "nazwa": "Corvantis Sieci sp. z o.o.",
+      "nip": "9995584735",
+      "regon": "999992367",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Aleksandra Wierzbicki",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9991132786",
+      "nazwa": "Danevia Automatyka sp. j.",
+      "nip": "9990166660",
+      "regon": "999032816",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999371",
+    "numer_postepowania": "DI.578.2026",
+    "numer_ted": "999927-2026",
+    "tytul": "Zakup i dostawa systemów telematycznych do obsługi zgłoszeń obywateli"
+  }
+}

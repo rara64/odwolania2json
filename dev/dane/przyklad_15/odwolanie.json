@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-01-12",
+    "czynnosc_dzien": "2025-12-27",
+    "czynnosc_powod_id": 2,
+    "czynnosc_opis": "Ogłoszenie wyboru oferty",
+    "miejscowosc": "Poznań"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9993682204",
+      "nazwa": "Belmoria Systemy sp. j.",
+      "nip": "9999142626",
+      "regon": "999173770",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Ryszard Lipowczyk",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9995419681",
+      "nazwa": "Fjordlight Rozwiązania sp. k.",
+      "nip": "9999463425",
+      "regon": "999846878",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999182",
+    "numer_postepowania": "SWZ.622.2026",
+    "numer_ted": null,
+    "tytul": "Zakup i dostawa systemów telematycznych do obsługi zgłoszeń obywateli"
+  }
+}

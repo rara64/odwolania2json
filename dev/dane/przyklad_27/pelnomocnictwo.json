@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995046546",
+        "nazwa": "Ilyrion Sieci sp. j.",
+        "nip": "9997585897",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Halina Dudziewicz"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Aleksandra Jabłończyk",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Dorota Jurgielewicz",
+      "pesel": null
+    }
+  ]
+}

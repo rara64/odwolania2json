@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-07-20",
+    "czynnosc_dzien": "2026-07-08",
+    "czynnosc_powod_id": 8,
+    "czynnosc_opis": "Zaniechanie wykluczenia wykonawcy",
+    "miejscowosc": "Bydgoszcz"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9990299642",
+      "nazwa": "Wexford Usługi sp. j.",
+      "nip": "9999988004",
+      "regon": "999132498",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Klaudia Dobrowolski",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992132121",
+      "nazwa": "Lunareth Sieci S.A.",
+      "nip": "9997286918",
+      "regon": "999839460",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999997",
+    "numer_postepowania": "SWZ.755.2026",
+    "numer_ted": "999035-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

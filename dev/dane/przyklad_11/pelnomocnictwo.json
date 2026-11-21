@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9992008329",
+        "nazwa": "Quantis Serwis sp. k.",
+        "nip": "9992052831",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Grzegorz Szulc"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Cezary Bartoszewicz",
+      "pesel": null
+    }
+  ]
+}

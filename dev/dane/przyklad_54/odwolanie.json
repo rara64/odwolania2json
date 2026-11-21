@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-05-11",
+    "czynnosc_dzien": "2026-05-06",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Łódź"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999448354",
+      "nazwa": "Calvero Gospodarka Odpadami sp.k.",
+      "nip": "9995986745",
+      "regon": "999796504",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Kamil Bąk",
+        "nazwa": "Kancelaria Adwokacka Bąk sp.p.",
+        "mail": "biuro@baklegal.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9997393941",
+      "nazwa": "Zakład Gospodarki Komunalnej w Lasowicach Wielkich sp. z o.o.",
+      "nip": "9997925835",
+      "regon": "999966377",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999561",
+    "numer_postepowania": "SZP.17.2026",
+    "numer_ted": "999353-2026",
+    "tytul": "Odbiór i zagospodarowanie odpadów komunalnych z nieruchomości zamieszkałych"
+  }
+}

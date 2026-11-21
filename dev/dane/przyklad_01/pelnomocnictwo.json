@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999405188",
+        "nazwa": "Belmoria Rozwiązania S.A.",
+        "nip": "9999284065",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Oliwia Kaczmarek"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Aleksandra Marciniak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Jolanta Zajkowski",
+      "pesel": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999511966",
+        "nazwa": "Corvantis Wyposażenie sp. z o.o.",
+        "nip": "9997553319",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Aleksandra Gajewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Ignacy Sadowski",
+      "pesel": null
+    }
+  ]
+}

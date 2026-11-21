@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9992842505",
+        "nazwa": "Galdaris Technologie sp. k.",
+        "nip": "9993885533",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Ignacy Sikorski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Marek Jabłoński",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Norbert Rutkiewicz",
+      "pesel": null
+    }
+  ]
+}

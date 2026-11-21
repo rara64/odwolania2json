@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-26",
+    "czynnosc_dzien": "2026-08-02",
+    "czynnosc_powod_id": 10,
+    "czynnosc_opis": "Zaniechanie unieważnienia postępowania",
+    "miejscowosc": "Katowice"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9992008329",
+      "nazwa": "Quantis Serwis sp. k.",
+      "nip": "9992052831",
+      "regon": "999795900",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Bartoszewicz",
+        "nazwa": "Kancelaria Adwokacka Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9990078038",
+      "nazwa": "Zorina Technologie sp. z o.o.",
+      "nip": "9995791492",
+      "regon": "999387761",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "DI.529.2026",
+    "numer_ted": "999759-2026",
+    "tytul": "Dostawa i wdrożenie oprogramowania do obsługi dokumentacji wraz z serwisem wsparcia technicznego"
+  }
+}

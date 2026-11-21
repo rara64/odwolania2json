@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-24",
+    "czynnosc_dzien": "2026-08-11",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": "Katowice"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9992397370",
+      "nazwa": "Gildentia Wyposażenie sp. z o.o.",
+      "nip": "9995126748",
+      "regon": "999165641",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Patrycja Furman",
+        "nazwa": "Kancelaria Radców Prawnych i Partnerzy",
+        "mail": "biuro@kontakt.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9997812714",
+      "nazwa": "Danevia Serwis sp. k.",
+      "nip": "9990342967",
+      "regon": "999118676",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": null,
+    "numer_postepowania": "ZP.447.2026",
+    "numer_ted": "999512-2026",
+    "tytul": "Dostawa licencji oprogramowania do monitorowania infrastruktury i alarmowej"
+  }
+}

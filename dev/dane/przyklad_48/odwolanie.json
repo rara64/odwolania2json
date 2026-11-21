@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-08-02",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9990430692",
+      "nazwa": "Prestal Dystrybucja Medyczna S.A.",
+      "nip": "9990396494",
+      "regon": "999666290",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Leszek Jabłoński",
+        "nazwa": "Kancelaria Adwokacka Jabłoński sp.p.",
+        "mail": "biuro@jablonski.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9999408455",
+      "nazwa": "Szpital Specjalistyczny im. dr. Władysława Biegańskiego w Dąbrowie Leśnej",
+      "nip": "9994579741",
+      "regon": "999479491",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999508",
+    "numer_postepowania": "DAZ/PN/67/26",
+    "numer_ted": null,
+    "tytul": "Sukcesywna dostawa produktów leczniczych w podziale na 12 pakietów"
+  }
+}

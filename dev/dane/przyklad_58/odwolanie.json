@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-10-06",
+    "czynnosc_powod_id": 10,
+    "czynnosc_opis": "Zaniechanie unieważnienia postępowania",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995522683",
+      "nazwa": "Imperon Serwis sp. z o.o.",
+      "nip": "9993124780",
+      "regon": "999513156",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Grzegorz Wiśniewski",
+        "nazwa": "Wiśniewski Legal Kancelaria Radców Prawnych sp. z o.o.",
+        "mail": "kontakt@wisniewskiprawo.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": null,
+      "nazwa": "Państwowa Akademia Nauk Stosowanych w Krzemienicy",
+      "nip": "9996334986",
+      "regon": "999412535",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999827",
+    "numer_postepowania": "DAZ.139.2026",
+    "numer_ted": "999345-2026",
+    "tytul": "Całodobowa obsługa techniczna i konserwacja instalacji budynków Zamawiającego"
+  }
+}

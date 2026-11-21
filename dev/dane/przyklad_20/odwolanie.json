@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-05-27",
+    "czynnosc_dzien": "2026-05-11",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": "Warszawa"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9996429969",
+      "nazwa": "Quentavis Usługi sp. z o.o.",
+      "nip": "9992111166",
+      "regon": "999970360",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Aleksandra Wierzbicka",
+        "nazwa": "Kancelaria Adwokacka i Partnerzy",
+        "mail": "biuro@poczta.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9991809197",
+      "nazwa": "Talveris Automatyka sp. j.",
+      "nip": "9994312880",
+      "regon": "999732519",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999715",
+    "numer_postepowania": "DI.228.2026",
+    "numer_ted": null,
+    "tytul": "Dostawa materiałów eksploatacyjnych do urządzeń biurowych"
+  }
+}

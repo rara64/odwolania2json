@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9992671408",
+        "nazwa": "Elmontex Energetyka sp. z o.o.",
+        "nip": "9996380214",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Andrzej Wawrzyniak"
+        },
+        {
+          "imie_nazwisko": "Beata Sobczak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Katarzyna Michalak",
+      "pesel": "85071204278"
+    }
+  ]
+}

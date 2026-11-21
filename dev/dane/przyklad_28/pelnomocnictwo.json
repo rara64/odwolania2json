@@ -1,0 +1,27 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9997060431",
+        "nazwa": "Yldenia Sieci S.A.",
+        "nip": "9997550083",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Aleksandra Walczak"
+        },
+        {
+          "imie_nazwisko": "Weronika Pawlak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Zbigniew Dobrowolski",
+      "pesel": null
+    }
+  ]
+}

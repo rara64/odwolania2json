@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2026-04-17",
+    "czynnosc_powod_id": 11,
+    "czynnosc_opis": "Opis przedmiotu zamówienia (OPZ)",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9995264890",
+      "nazwa": "Uldaris Automatyka S.A.",
+      "nip": "9997683341",
+      "regon": "999782776",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Halina Jabłończyk",
+        "nazwa": "Kancelaria Radców Prawnych i Partnerzy",
+        "mail": "biuro@poczta.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9992815321",
+      "nazwa": "Quentavis Technologie sp. k.",
+      "nip": "9999726630",
+      "regon": "999835633",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999033/03",
+    "numer_postepowania": "ZP.548.2026",
+    "numer_ted": "999819-2026",
+    "tytul": "Odbiór i zagospodarowanie odpadów komunalnych powstałych w obiektach"
+  }
+}

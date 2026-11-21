@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-06-16",
+    "czynnosc_dzien": "2026-06-09",
+    "czynnosc_powod_id": 9,
+    "czynnosc_opis": "Decyzja o unieważnieniu postępowania",
+    "miejscowosc": "Koszalin"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999271101",
+      "nazwa": "Lantis Aparatura Medyczna sp.j.",
+      "nip": "9999915346",
+      "regon": "999424319",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Barbara Włodarczyk",
+        "nazwa": "Kancelaria Radcy Prawnego Barbara Włodarczyk",
+        "mail": "kancelaria@wlodarczyk.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9994851178",
+      "nazwa": "Szpital Specjalistyczny im. Mikołaja Kopernika w Miłkowie",
+      "nip": "9995452613",
+      "regon": "999839803",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999236",
+    "numer_postepowania": "ZP.50.2026",
+    "numer_ted": null,
+    "tytul": "Dostawa sprzętu do sterylizacji wraz z serwisem gwarancyjnym"
+  }
+}

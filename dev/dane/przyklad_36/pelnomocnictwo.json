@@ -1,0 +1,31 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9995831483",
+        "nazwa": "Rubiconis Technologie S.A.",
+        "nip": "9998174794",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Zbigniew Mazurkiewicz"
+        },
+        {
+          "imie_nazwisko": "Patrycja Marciniak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Dorota Siedlecki",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Ryszard Jabłończyk",
+      "pesel": null
+    }
+  ]
+}

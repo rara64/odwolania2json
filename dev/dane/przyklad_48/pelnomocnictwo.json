@@ -1,0 +1,48 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9990430692",
+        "nazwa": "Prestal Dystrybucja Medyczna S.A.",
+        "nip": "9990396494",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Kamil Tomaszewski"
+        },
+        {
+          "imie_nazwisko": "Marta Mazur"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9997591201",
+        "nazwa": "Fendor Farmacja sp. z o.o.",
+        "nip": "9993439623",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Wojciech Wysocki"
+        },
+        {
+          "imie_nazwisko": "Iwona Grabowska"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Leszek Jabłoński",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Tadeusz Rutkowski",
+      "pesel": null
+    }
+  ]
+}

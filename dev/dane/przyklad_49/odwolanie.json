@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-07-03",
+    "czynnosc_dzien": "2026-06-28",
+    "czynnosc_powod_id": 10,
+    "czynnosc_opis": "Zaniechanie unieważnienia postępowania",
+    "miejscowosc": "Gdańsk"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9998920417",
+      "nazwa": "Altrona Farmacja sp.k.",
+      "nip": "9994895854",
+      "regon": "999640601",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Cezary Sikorski",
+        "nazwa": "Kancelaria Adwokacka Sikorski sp.p.",
+        "mail": "sikorski@sikorskikancelaria.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9997131107",
+      "nazwa": "Samodzielny Publiczny Zakład Opieki Zdrowotnej w Kamionnej",
+      "nip": "9994615677",
+      "regon": "999520961",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999201",
+    "numer_postepowania": "ZZP-11/2026",
+    "numer_ted": "999983-2026",
+    "tytul": "Dostawa sprzętu do sterylizacji wraz z serwisem gwarancyjnym"
+  }
+}

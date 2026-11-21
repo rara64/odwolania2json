@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-10-27",
+    "czynnosc_dzien": "2026-10-10",
+    "czynnosc_powod_id": 7,
+    "czynnosc_opis": "Zaniechanie odrzucenia oferty",
+    "miejscowosc": "Lublin"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9999008184",
+      "nazwa": "Kavendis Infrastruktura sp. z o.o.",
+      "nip": "9999892540",
+      "regon": "999263852",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Norbert Milewski",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@sekretariat.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9998618920",
+      "nazwa": "Ypsilon Usługi sp. j.",
+      "nip": "9994288070",
+      "regon": "999461865",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999352",
+    "numer_postepowania": "DI.356.2026",
+    "numer_ted": null,
+    "tytul": "Świadczenie usług pocztowych i kurierskich na potrzeby urzędu"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9996858325",
+        "nazwa": "Vellum Facility sp. z o.o. sp.k.",
+        "nip": "9999762610",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Norbert Kubiak"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Celina Ostrowska",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Barbara Piotrowska",
+      "pesel": null
+    }
+  ]
+}

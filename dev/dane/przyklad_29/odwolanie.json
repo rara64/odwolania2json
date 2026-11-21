@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": "2026-08-08",
+    "czynnosc_dzien": "2026-07-24",
+    "czynnosc_powod_id": 4,
+    "czynnosc_opis": "Publikacja specyfikacji warunków zamówienia (SWZ)",
+    "miejscowosc": "Kraków"
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9997854723",
+      "nazwa": "Corvella Serwis sp. k.",
+      "nip": "9995776771",
+      "regon": "999851129",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Ewa Chalupowicz",
+        "nazwa": "Kancelaria Prawna i Partnerzy",
+        "mail": "biuro@sekretariat.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9997685689",
+      "nazwa": "Rubiconis Wyposażenie sp. z o.o.",
+      "nip": "9994374540",
+      "regon": "999032294",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999346",
+    "numer_postepowania": "ZS.377.2026",
+    "numer_ted": "999862-2026",
+    "tytul": "Usługi ochrony fizycznej i monitoringu w systemie całodobowym"
+  }
+}

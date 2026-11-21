@@ -1,0 +1,38 @@
+{
+  "OdwolanieKIO": {
+    "data": null,
+    "czynnosc_dzien": "2025-12-21",
+    "czynnosc_powod_id": 1,
+    "czynnosc_opis": "Decyzja o odrzuceniu oferty",
+    "miejscowosc": null
+  },
+  "Odwolujacy": [
+    {
+      "krs": "9990929624",
+      "nazwa": "Deltawing Usługi sp. j.",
+      "nip": "9994888947",
+      "regon": "999788508",
+      "przez-pelnomocnika": 1,
+      "pelnomocnik": {
+        "imie_nazwisko": "Ignacy Rutkiewicz",
+        "nazwa": "Kancelaria Radców Prawnych Spółka z ograniczoną odpowiedzialnością",
+        "mail": "biuro@biuro.example"
+      }
+    }
+  ],
+  "Zamawiajacy": [
+    {
+      "krs": "9999087092",
+      "nazwa": "Wexoria Serwis sp. z o.o.",
+      "nip": "9990199346",
+      "regon": "999007965",
+      "prowadzacy_postepowanie": null
+    }
+  ],
+  "ZamowieniePubliczne": {
+    "numer_bzp": "2026/BZP00999484",
+    "numer_postepowania": "ZP.354.2026",
+    "numer_ted": "999000-2026",
+    "tytul": "Modernizacja instalacji wentylacyjnej w obiekcie użyteczności publicznej"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9999877287",
+        "nazwa": "Montera Farmacja S.A.",
+        "nip": "9996715327",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Felicja Wiśniewska"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Damian Sobczak",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Henryk Ostrowski",
+      "pesel": null
+    }
+  ]
+}

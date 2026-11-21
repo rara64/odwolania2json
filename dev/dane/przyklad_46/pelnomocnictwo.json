@@ -1,0 +1,45 @@
+{
+  "mocodawca": [
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9997450782",
+        "nazwa": "Korvel Serwis sp. z o.o. sp.k.",
+        "nip": "9996998288",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Wojciech Zieliński"
+        },
+        {
+          "imie_nazwisko": "Natalia Maciejewska"
+        }
+      ]
+    },
+    {
+      "data": {
+        "imie_nazwisko": null,
+        "krs": "9990093297",
+        "nazwa": "Lumerio Facility sp.j.",
+        "nip": "9999917794",
+        "typ": "osoba_prawna"
+      },
+      "podpisujacy": [
+        {
+          "imie_nazwisko": "Wojciech Majewski"
+        }
+      ]
+    }
+  ],
+  "pelnomocnicy": [
+    {
+      "imie_nazwisko": "Rafał Piotrowski",
+      "pesel": null
+    },
+    {
+      "imie_nazwisko": "Rafał Czajka",
+      "pesel": null
+    }
+  ]
+}
