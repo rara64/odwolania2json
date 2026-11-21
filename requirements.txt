@@ -4,9 +4,19 @@ rapidocr>=3.10.0
 pypdfium2>=5.15.0
 pillow>=10.0.0
 pandas>=2.0.0
+numpy>=1.24.0
 
-# PyTorch (OCR inference backend)
+# Definitions & classifier rules (YAML)
+PyYAML>=6.0
+
+# PyTorch – CPU-only build (target: laptop without GPU).
+# On Linux plain PyPI ships CUDA wheels (~GBs); this index serves the "+cpu" builds.
+# Windows/macOS PyPI wheels are already CPU-only, so the index changes nothing there.
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
+
+# ONNX Runtime – faster CPU backend for RapidOCR (picked automatically by the extractor)
+onnxruntime>=1.20.0
 
 # Models & Validation
 pydantic>=2.0.0
