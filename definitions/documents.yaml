@@ -1,0 +1,30 @@
+# Klasy dokumentów i ustawienia wyjścia.
+#
+# Klucz klasy = etykieta zwracana przez klasyfikator
+# (pipeline/document-classifier/rules.yaml) i klucz w field_definitions.yaml
+# oraz derivations.yaml.
+#
+# Nowa klasa dokumentu:
+#   1. reguły klasyfikacji     → pipeline/document-classifier/rules.yaml
+#   2. wpis tutaj              → documents.yaml
+#   3. pola                    → field_definitions.yaml
+#   4. (opcjonalnie) pola wyliczane → derivations.yaml, słowniki → lookups.yaml,
+#      nowe formaty wartości → formats.yaml
+
+version: 1
+
+negative_output: {}            # dokument spoza klas (classify() → None) → pusty obiekt JSON
+
+documents:
+
+  odwolanie:
+    output_file: odwolanie.json
+    description: Odwołanie do Prezesa Krajowej Izby Odwoławczej
+
+  pelnomocnictwo:
+    output_file: pelnomocnictwo.json
+    description: Pełnomocnictwo do reprezentowania wykonawcy przed KIO
+
+  przelew:
+    output_file: przelew.json
+    description: Potwierdzenie przelewu (opłata skarbowa od pełnomocnictwa / wpis)

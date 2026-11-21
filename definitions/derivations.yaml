@@ -1,0 +1,35 @@
+# Pola wyliczane – wartości ustalane z innych pól zamiast odczytu z dokumentu.
+#
+# documents.<klasa>.<ścieżka pola>: reguła
+#   Ścieżka jak w JSON-ie, `[]` = każdy element tablicy, np. Odwolujacy[].przez-pelnomocnika.
+#   Ścieżki w regułach są względne do obiektu zawierającego pole; `../` = poziom wyżej.
+#
+# Reguły:
+#   lookup:   {from: <ścieżka>, table: <nazwa z lookups.yaml>}
+#   present:  <ścieżka>   → 1 gdy wartość niepusta, inaczej 0
+#   when:     [{if: <warunek>, then: <wartość>}, ..., {else: <wartość>}]
+#             brak pasującego warunku i brak `else` → zostaje wartość z dokumentu
+#   override: true → wartość odczytana z dokumentu ma pierwszeństwo przed wyliczoną
+
+version: 1
+
+documents:
+
+  odwolanie:
+    OdwolanieKIO.czynnosc_opis:
+      lookup: {from: czynnosc_powod_id, table: czynnosc_powod}
+
+    Odwolujacy[].przez-pelnomocnika:
+      present: pelnomocnik.imie_nazwisko
+
+    Zamawiajacy[].prowadzacy_postepowanie:
+      override: true
+      when:
+        - {if: 'count(../) == 1', then: null}   # jeden zamawiający → null
+
+  pelnomocnictwo:
+    mocodawca[].data.typ:
+      override: true
+      when:
+        - {if: 'krs == null and imie_nazwisko != null', then: osoba_fizyczna}
+        - {else: osoba_prawna}
