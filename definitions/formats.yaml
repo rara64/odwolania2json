@@ -5,13 +5,16 @@
 #
 # Klucze formatu:
 #   json_type    – typ w JSON-ie: string | integer | number
-#   description  – postać wartości oczekiwana w JSON-ie (trafia do promptu LLM)
+#   description  – postać wartości oczekiwana w JSON-ie (dokumentacja formatu)
 #   normalize    – lista kroków normalizacji odczytanego tekstu
 #   pattern      – wyrażenie regularne (Python `re`), które musi spełnić wartość po normalizacji
 #   values       – dozwolone wartości (zbiór zamknięty)
 #   checksum     – {algorithm, mode}; mode: warn = niezgodna suma kontrolna to tylko
 #                  ostrzeżenie w raporcie, wartość zostaje (dane syntetyczne w dev/dane
 #                  często mają niepoprawne sumy kontrolne)
+#   capture      – (opcjonalnie) wyrażenie regularne wyszukujące surową wartość w tekście
+#                  dokumentu; używane przez reguły ekstrakcji exportera.
+#                  Wartością jest pierwsza niepusta grupa (albo całe dopasowanie).
 
 version: 1
 
@@ -26,6 +29,7 @@ formats:
 
   date:
     json_type: string
+    capture: '(\d{4}-\d{2}-\d{2}|\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}|\d{1,2}\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)\s+\d{4})'
     description: Data ISO 8601 (RRRR-MM-DD)
     normalize: [strip, date_to_iso]   # akceptuje m.in. 21.03.2026, 21-03-2026, 21 marca 2026 r.
     pattern: '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$'
@@ -39,22 +43,26 @@ formats:
 
   amount:
     json_type: number
+    capture: '(\d[\d \u00a0]*(?:[.,]\d{1,2})?)\s*(?:zł|PLN)?'
     description: Kwota w PLN jako liczba (200.0, nie "200,00 zł")
     normalize: [strip, remove_currency, remove_thousand_separators, decimal_comma_to_dot]
     pattern: '^\d+(\.\d{1,2})?$'
 
   person_name:
     json_type: string
+    capture: '(?:(?:adw\.|adwokat|r\.\s?pr\.|radca prawny|radcy prawnego|mec\.)\s+([A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?\s+[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?)|^[ \t.]*(?!(?:Prezes|Wiceprezes|Członek|Dyrektor|Prokurent|Pełnomocni|Mocodaw|Zamawiając|Odwołując|Krajow|Strona|Kancelari|Spółk|Bank)\w*)([A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?[ ]+[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?)(?:,?[ ]*(?:adw\.|r\.\s?pr\.))?[ \t]*$)'
     description: Imię i nazwisko w mianowniku, bez tytułów (adw., r.pr., dr, mec.)
     normalize: [strip, collapse_whitespace, remove_titles]
 
   email:
     json_type: string
+    capture: '([\w.+-]+@[\w-]+(?:\.[\w-]+)+)'
     normalize: [strip, lowercase]
     pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
 
   nip:
     json_type: string
+    capture: '\b((?:PL)?[ ]?\d{3}[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}|\d{3}[- ]?\d{2}[- ]?\d{2}[- ]?\d{3})\b'
     description: 10 cyfr, bez prefiksu PL, myślników i spacji
     normalize: [strip, remove_prefix_PL, digits_only]
     pattern: '^\d{10}$'
@@ -62,6 +70,7 @@ formats:
 
   regon:
     json_type: string
+    capture: '\b(\d{14}|\d{9})\b'
     description: 9 lub 14 cyfr
     normalize: [strip, digits_only]
     pattern: '^(\d{9}|\d{14})$'
@@ -69,18 +78,21 @@ formats:
 
   krs:
     json_type: string
+    capture: '\b(\d{10})\b'
     description: 10 cyfr (z zerami wiodącymi)
     normalize: [strip, digits_only, {left_pad: {width: 10, char: '0'}}]
     pattern: '^\d{10}$'
 
   pesel:
     json_type: string
+    capture: '\b(\d{11})\b'
     normalize: [strip, digits_only]
     pattern: '^\d{11}$'
     checksum: {algorithm: pesel, mode: warn}
 
   bank_account:
     json_type: string
+    capture: '((?:PL)?[ ]?\d{2}(?:[ ]?\d{4}){6})'
     description: Numer rachunku NRB – 26 cyfr, bez prefiksu PL i spacji
     normalize: [strip, remove_prefix_PL, digits_only]
     pattern: '^\d{26}$'
@@ -88,12 +100,14 @@ formats:
 
   numer_bzp:
     json_type: string
+    capture: '(\d{4}\s*/\s*BZP\s*\d{8}(?:/\d{2})?)'
     description: Numer ogłoszenia w Biuletynie Zamówień Publicznych, np. 2026/BZP00999778
     normalize: [strip, uppercase, remove_whitespace]
     pattern: '^\d{4}/BZP\d{8}(/\d{2})?$'
 
   numer_ted:
     json_type: string
+    capture: '(\d{6}-\d{4}|\d{4}/S\s?\d{3}-\d{6})'
     description: Numer ogłoszenia TED w postaci NNNNNN-RRRR, np. 999137-2026
     normalize:
       - strip

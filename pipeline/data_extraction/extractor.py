@@ -275,7 +275,7 @@ def _text_layer_lines(page, width: float, height: float) -> list[tuple[str, dict
 
 
 def _docling_preview(doc, full_markdown: str) -> str:
-    """Markdown pierwszych PREVIEW_PAGES stron (dla LLM)."""
+    """Markdown pierwszych PREVIEW_PAGES stron (tam zwykle są kluczowe dane)."""
     if len(doc.pages) <= PREVIEW_PAGES:
         return full_markdown
     try:

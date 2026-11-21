@@ -12,9 +12,12 @@
 # Pole:
 #   type          – nazwa formatu (formats.yaml)
 #   nullable      – true: brak wartości → null (domyślnie false; brak = błąd walidacji)
-#   description   – znaczenie pola; trafia do promptu LLM i do raportu ekstrakcji
-#   hints         – etykiety/frazy, przy których wartość zwykle stoi w dokumencie
+#   description   – znaczenie pola (dokumentacja definicji)
+#   hints         – etykiety/frazy, przy których wartość zwykle stoi w dokumencie;
+#                   reguły ekstrakcji szukają wartości przy tych etykietach
 #   values        – dozwolone wartości (zawęża format)
+#   capture       – (opcjonalnie) regex surowej wartości dla reguł ekstrakcji
+#                   exportera; nadpisuje `capture` formatu
 #
 # Pola wyliczane z innych pól (zamiast odczytu z dokumentu) → derivations.yaml.
 
@@ -53,6 +56,7 @@ documents:
             type: text
             nullable: true
             description: Miejscowość sporządzenia odwołania (nagłówek pisma, przed datą)
+            capture: '^[ \t]*([A-ZĄĆĘŁŃÓŚŹŻ][\wąćęłńóśźż-]+(?:[ -][A-ZĄĆĘŁŃÓŚŹŻ][\wąćęłńóśźż-]+)?),[ \t]+(?:dnia[ \t]+)?\d{1,2}[ .]'
 
       Odwolujacy:
         type: array
@@ -91,6 +95,7 @@ documents:
                   nullable: true
                   description: Nazwa kancelarii pełnomocnika
                   hints: ['Kancelaria']
+                  capture: '(Kancelari[^\n,]*(?:\n[a-ząćęłńóśźż][^\n,]*)?)'
                 mail:
                   type: email
                   nullable: true
@@ -134,7 +139,8 @@ documents:
           numer_postepowania:
             type: text
             description: Znak/numer referencyjny postępowania nadany przez zamawiającego, np. ZS.791.2026
-            hints: ['znak sprawy', 'nr postępowania', 'numer referencyjny', 'sygn.']
+            hints: ['znak sprawy', 'nr postępowania', 'numer postępowania', 'numer referencyjny', 'nr referencyjny', 'sygn.']
+            capture: '\b([A-ZŁŚŻ][A-Za-z]{0,9}(?:[./-][A-Za-z0-9]+)*[./-]\d{4})\b'
           numer_ted:
             type: numer_ted
             nullable: true
@@ -227,10 +233,11 @@ documents:
             type: text
             description: Identyfikator transakcji w banku
             hints: ['numer transakcji', 'nr ref.', 'numer referencyjny', 'identyfikator operacji']
+            capture: '\b([A-Z]{2,}[0-9][A-Z0-9]{5,})\b'
           tytul:
             type: text
             description: Tytuł przelewu – pełny, w jednej linii
-            hints: ['tytuł', 'tytułem', 'opis']
+            hints: ['tytuł przelewu', 'tytuł', 'tytułem', 'opis']
           z_rachunku:
             type: bank_account
             description: Rachunek nadawcy (obciążany)
