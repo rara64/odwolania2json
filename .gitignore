@@ -7,5 +7,5 @@
 !.vscode/*.code-snippets
 !*.code-workspace
 .wymagania/*
-.*/__pycache__/*
+__pycache__/
 dev/dane/skany/*
