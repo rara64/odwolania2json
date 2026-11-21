@@ -9,3 +9,4 @@
 .wymagania/*
 __pycache__/
 dev/dane/skany/*
+.venv/*
