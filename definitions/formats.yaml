@@ -52,7 +52,7 @@ formats:
     json_type: string
     capture: '(?:(?:adw\.|adwokat|r\.\s?pr\.|radca prawny|radcy prawnego|mec\.)\s+([A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?\s+[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?)|^[ \t.]*(?!(?:Prezes|Wiceprezes|Członek|Dyrektor|Prokurent|Pełnomocni|Mocodaw|Zamawiając|Odwołując|Krajow|Strona|Kancelari|Spółk|Bank)\w*)([A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?[ ]+[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+(?:-[A-ZŁŚŻŹĆ][a-ząćęłńóśźż]+)?)(?:,?[ ]*(?:adw\.|r\.\s?pr\.))?[ \t]*$)'
     description: Imię i nazwisko w mianowniku, bez tytułów (adw., r.pr., dr, mec.)
-    normalize: [strip, collapse_whitespace, remove_titles]
+    normalize: [strip, collapse_whitespace, remove_titles, nominative_person_name]
 
   email:
     json_type: string

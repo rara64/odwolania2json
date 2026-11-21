@@ -122,6 +122,120 @@ _TITLES_RE = re.compile(
     re.IGNORECASE,
 )
 
+_MORFEUSZ = None
+
+
+def _get_morfeusz():
+    global _MORFEUSZ
+    if _MORFEUSZ is None:
+        from morfeusz2 import Morfeusz
+        _MORFEUSZ = Morfeusz()
+    return _MORFEUSZ
+
+
+def _morfeusz_lemma(interpretation: tuple) -> str:
+    lemma = interpretation[1]
+    return lemma.split(":", 1)[0]
+
+
+def _nominative_word(word: str) -> str:
+    morfeusz = _get_morfeusz()
+    candidates = morfeusz.analyse(word)
+    named = []
+    for interpretation in candidates:
+        data = interpretation[2]
+        if not isinstance(data, tuple) or len(data) < 4:
+            continue
+        orth, _lemma_field, tag, labels = data[:4]
+        if not orth:
+            continue
+        lemma = _morfeusz_lemma(data)
+        if not lemma:
+            continue
+        name_label = "imię" in labels or "nazwisko" in labels
+        if name_label:
+            named.append((data, lemma, name_label))
+
+    if not named:
+        return word
+
+    def is_nominative(data: tuple) -> bool:
+        tag = data[2]
+        return ":nom" in tag and ":sg:" in tag
+
+    def is_pure_oblique(data: tuple) -> bool:
+        tag = data[2]
+        return ":nom" not in tag and ":voc" not in tag
+
+    oblique = [
+        item for item in named
+        if is_pure_oblique(item[0])
+        and ("imię" in item[0][3] or "nazwisko" in item[0][3])
+    ]
+    nominative = [item for item in named if is_nominative(item[0])]
+
+    # Prefer an explicit nominative first name. It prevents names already in
+    # mianownik from being replaced because of a second, ambiguous interpretation.
+    for data, _lemma, _ in nominative:
+        if "imię" in data[3]:
+            strong_oblique = [
+                item for item in oblique
+                if "imię" in item[0][3]
+                and item[0][2].startswith("subst:")
+            ]
+            # In an ambiguous female nominative (e.g. Aleksandra), keep the
+            # nominative form instead of choosing a masculine oblique lemma.
+            if not strong_oblique or ":f" in data[2]:
+                return data[0]
+
+    if oblique:
+        def oblique_rank(item: tuple) -> tuple:
+            data, _lemma, _name_label = item
+            tag = data[2]
+            return (
+                "imię" in data[3],
+                tag.startswith("subst:"),
+                ":gen.acc:" in tag,
+            )
+
+        data, lemma, _ = max(oblique, key=oblique_rank)
+        tag = data[2]
+        if ":nom" in tag or ":voc" in tag:
+            return data[0]
+    elif nominative:
+        return max(nominative, key=lambda item: item[0][2].startswith("subst:"))[0][0]
+    else:
+        return word
+
+    lemma_candidates = morfeusz.analyse(lemma)
+    nominative = []
+    for interpretation in lemma_candidates:
+        lemma_data = interpretation[2]
+        if not isinstance(lemma_data, tuple) or len(lemma_data) < 4:
+            continue
+        lemma_tag = lemma_data[2]
+        if ":nom" in lemma_tag and (
+            lemma_data[0].casefold() == lemma.casefold()
+            or "imię" in lemma_data[3]
+            or "nazwisko" in lemma_data[3]
+        ):
+            nominative.append(lemma_data)
+    if not nominative:
+        return lemma
+    return max(nominative, key=lambda data: data[2].startswith("subst:"))[0]
+
+
+def _nominative_person_name(text: str, _arg: Any = None) -> str:
+    text = re.sub(r"\s+", " ", text.strip())
+    if not text:
+        return text
+
+    def inflect_part(part: str) -> str:
+        pieces = part.split("-")
+        return "-".join(_nominative_word(piece) for piece in pieces)
+
+    return " ".join(inflect_part(word) for word in text.split(" "))
+
 
 def _date_to_iso(text: str, _arg: Any = None) -> str:
     candidates = []
@@ -168,6 +282,7 @@ NORMALIZERS: dict[str, Callable[[str, Any], str]] = {
     "remove_thousand_separators": _remove_thousand_separators,
     "decimal_comma_to_dot": lambda s, _: s.replace(",", "."),
     "remove_titles": lambda s, _: re.sub(r"\s+", " ", _TITLES_RE.sub(" ", s)).strip(" ,;"),
+    "nominative_person_name": _nominative_person_name,
     "date_to_iso": _date_to_iso,
     "left_pad": _left_pad,
     "regex_replace": _regex_replace,

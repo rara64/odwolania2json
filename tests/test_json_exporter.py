@@ -45,6 +45,12 @@ def _finish(exporter, label, raw):
         ("numer_bzp", "2026/bzp 00999778", "2026/BZP00999778"),
         ("krs", "12345", "0000012345"),
         ("person_name", "r. pr. Aleksandra Marciniak", "Aleksandra Marciniak"),
+        ("person_name", "Jana Kowalskiego", "Jan Kowalski"),
+        ("person_name", "Marię Kowalską", "Maria Kowalska"),
+        ("person_name", "Agnieszki Kowalskiej", "Agnieszka Kowalska"),
+        ("person_name", "Piotra Nowaka", "Piotr Nowak"),
+        ("person_name", "Aleksandra Marciniak", "Aleksandra Marciniak"),
+        ("person_name", "Jan Kowalski", "Jan Kowalski"),
         ("bank_account", "PL05 4706 8028 7581 5397 2145 5024", "05470680287581539721455024"),
         ("flag", True, 1),
         ("regon", "12345", None),  # niezgodne z wzorcem → null
