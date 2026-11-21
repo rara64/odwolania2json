@@ -1,0 +1,388 @@
+# Definicje pól dokumentów → struktura wyjściowego JSON-a.
+#
+# Plik opisuje, JAKIE pola wyciągamy z każdej klasy dokumentu i JAK z odczytanych
+# wartości złożyć JSON zgodny z oczekiwanym formatem (dev/dane/przyklad_*/<klasa>.json).
+# Nową klasę dokumentu dodaje się tutaj (+ reguły w pipeline/document-classifier/rules.yaml),
+# bez zmian w kodzie.
+#
+# ── Budowa ───────────────────────────────────────────────────────────────────
+#   formats    – typy wartości: typ JSON, normalizacja, wzorzec, suma kontrolna
+#   documents  – klasy dokumentów; klucz = etykieta z klasyfikatora (rules.yaml)
+#     output_file  – nazwa pliku wynikowego
+#     schema       – drzewo pól; KOLEJNOŚĆ kluczy = kolejność w JSON-ie
+#   negative_output – co zapisać, gdy klasyfikator zwróci None (dokument negatywny)
+#
+# ── Węzeł schematu ───────────────────────────────────────────────────────────
+#   type: object  → fields: {nazwa: węzeł, ...}
+#   type: array   → items: węzeł; min_items (domyślnie 0)
+#   type: <format z sekcji formats> → pole-liść
+#
+# ── Pole-liść ────────────────────────────────────────────────────────────────
+#   type          – nazwa formatu (formats.*)
+#   nullable      – true: brak wartości → null (domyślnie false; brak = błąd walidacji)
+#   description   – znaczenie pola; trafia do promptu LLM i do raportu ekstrakcji
+#   hints         – etykiety/frazy, przy których wartość zwykle stoi w dokumencie
+#   values        – (format enum) dozwolone wartości
+#   derive        – pole wyliczane z innych pól, nie odczytywane z dokumentu:
+#                     lookup:     {from: <ścieżka>, table: <nazwa w lookups>}
+#                     present:    <ścieżka>  → 1 gdy wartość/obiekt niepusty, inaczej 0
+#                     when:       [{if: <warunek>, then: <wartość>}, ..., {else: <wartość>}]
+#                   Ścieżki są względne do obiektu-rodzica (`../` = poziom wyżej).
+#                   Pole z `derive` może zostać nadpisane wartością odczytaną
+#                   z dokumentu, jeśli ekstraktor ją zwróci (override: true).
+#
+# ── Ścieżki w JSON-ie ────────────────────────────────────────────────────────
+#   Nazwy pól są kopiowane 1:1 (w tym `przez-pelnomocnika` z myślnikiem).
+
+version: 1
+
+negative_output: {}            # dokument spoza klas → pusty obiekt JSON
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FORMATY WARTOŚCI
+# Kolejność przetwarzania: normalize → pattern → checksum.
+# checksum: warn  – niezgodna suma kontrolna = ostrzeżenie w raporcie, wartość zostaje
+#           (dane syntetyczne w dev/dane często mają niepoprawne sumy kontrolne).
+# ═════════════════════════════════════════════════════════════════════════════
+formats:
+
+  text:
+    json_type: string
+    normalize: [strip, collapse_whitespace]
+
+  date:
+    json_type: string
+    description: Data ISO 8601 (RRRR-MM-DD)
+    normalize: [strip, date_to_iso]   # akceptuje m.in. 21.03.2026, 21-03-2026, 21 marca 2026 r.
+    pattern: '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$'
+
+  integer:
+    json_type: integer
+
+  flag:
+    json_type: integer
+    values: [0, 1]
+
+  amount:
+    json_type: number
+    description: Kwota w PLN jako liczba (200.0, nie "200,00 zł")
+    normalize: [strip, remove_currency, remove_thousand_separators, decimal_comma_to_dot]
+    pattern: '^\d+(\.\d{1,2})?$'
+
+  person_name:
+    json_type: string
+    description: Imię i nazwisko w mianowniku, bez tytułów (adw., r.pr., dr, mec.)
+    normalize: [strip, collapse_whitespace, remove_titles]
+
+  email:
+    json_type: string
+    normalize: [strip, lowercase]
+    pattern: '^[^@\s]+@[^@\s]+\.[^@\s]+$'
+
+  nip:
+    json_type: string
+    description: 10 cyfr, bez prefiksu PL, myślników i spacji
+    normalize: [strip, remove_prefix_PL, digits_only]
+    pattern: '^\d{10}$'
+    checksum: {algorithm: nip, mode: warn}
+
+  regon:
+    json_type: string
+    description: 9 lub 14 cyfr
+    normalize: [strip, digits_only]
+    pattern: '^(\d{9}|\d{14})$'
+    checksum: {algorithm: regon, mode: warn}
+
+  krs:
+    json_type: string
+    description: 10 cyfr (z zerami wiodącymi)
+    normalize: [strip, digits_only, {left_pad: {width: 10, char: '0'}}]
+    pattern: '^\d{10}$'
+
+  pesel:
+    json_type: string
+    normalize: [strip, digits_only]
+    pattern: '^\d{11}$'
+    checksum: {algorithm: pesel, mode: warn}
+
+  bank_account:
+    json_type: string
+    description: Numer rachunku NRB – 26 cyfr, bez prefiksu PL i spacji
+    normalize: [strip, remove_prefix_PL, digits_only]
+    pattern: '^\d{26}$'
+    checksum: {algorithm: iban_mod97, mode: warn}
+
+  numer_bzp:
+    json_type: string
+    description: Numer ogłoszenia w Biuletynie Zamówień Publicznych, np. 2026/BZP00999778
+    normalize: [strip, uppercase, remove_whitespace]
+    pattern: '^\d{4}/BZP\d{8}(/\d{2})?$'
+
+  numer_ted:
+    json_type: string
+    description: Numer ogłoszenia TED w postaci NNNNNN-RRRR, np. 999137-2026
+    normalize:
+      - strip
+      - {regex_replace: {from: '^(\d{4})/S\s?\d{3}-(\d{6})$', to: '\2-\1'}}   # 2026/S 112-999137 → 999137-2026
+    pattern: '^\d{6}-\d{4}$'
+
+  enum:
+    json_type: string            # dozwolone wartości w polu `values`
+
+# ═════════════════════════════════════════════════════════════════════════════
+# TABELE SŁOWNIKOWE (dla derive.lookup)
+# ═════════════════════════════════════════════════════════════════════════════
+lookups:
+
+  czynnosc_powod:               # id zaskarżonej czynności → opis (z pierwszego zarzutu)
+    1: Decyzja o odrzuceniu oferty
+    2: Ogłoszenie wyboru oferty
+    3: Decyzja o wykluczeniu wykonawcy
+    4: Publikacja specyfikacji warunków zamówienia (SWZ)
+    5: Modyfikacja treści SWZ
+    6: Odpowiedzi i wyjaśnienia do SWZ
+    7: Zaniechanie odrzucenia oferty
+    8: Zaniechanie wykluczenia wykonawcy
+    9: Decyzja o unieważnieniu postępowania
+    10: Zaniechanie unieważnienia postępowania
+    11: Opis przedmiotu zamówienia (OPZ)
+    12: Projektowane postanowienia umowy
+
+# ═════════════════════════════════════════════════════════════════════════════
+# KLASY DOKUMENTÓW
+# ═════════════════════════════════════════════════════════════════════════════
+documents:
+
+  # ───────────────────────────────────────────────────────────────────────────
+  odwolanie:
+    output_file: odwolanie.json
+    description: Odwołanie do Prezesa Krajowej Izby Odwoławczej
+    schema:
+      type: object
+      fields:
+
+        OdwolanieKIO:
+          type: object
+          fields:
+            data:
+              type: date
+              nullable: true
+              description: Data sporządzenia odwołania (nagłówek pisma, obok miejscowości)
+              hints: ['<miejscowość>, dnia', 'dnia']
+            czynnosc_dzien:
+              type: date
+              description: Data dokonania zaskarżonej czynności zamawiającego (lub powzięcia o niej wiadomości)
+              hints: ['w dniu', 'czynności z dnia', 'informacja z dnia', 'opublikowano']
+            czynnosc_powod_id:
+              type: integer
+              description: >-
+                Rodzaj zaskarżonej czynności – id z tabeli lookups.czynnosc_powod;
+                ustalany na podstawie PIERWSZEGO zarzutu odwołania
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              hints: ['Zarzut nr 1', 'Zarzuty', 'odwołanie wnoszę od']
+            czynnosc_opis:
+              type: enum
+              description: Opis zaskarżonej czynności – zawsze zgodny z czynnosc_powod_id
+              derive: {lookup: {from: czynnosc_powod_id, table: czynnosc_powod}}
+            miejscowosc:
+              type: text
+              nullable: true
+              description: Miejscowość sporządzenia odwołania (nagłówek pisma, przed datą)
+
+        Odwolujacy:
+          type: array
+          min_items: 1
+          description: Wykonawca(y) wnoszący odwołanie
+          hints: ['Odwołujący:', 'Wykonawca:']
+          items:
+            type: object
+            fields:
+              krs:
+                type: krs
+                nullable: true
+                hints: ['KRS', 'nr KRS']
+              nazwa:
+                type: text
+                description: Pełna nazwa (firma) odwołującego
+              nip:
+                type: nip
+                hints: ['NIP']
+              regon:
+                type: regon
+                hints: ['REGON']
+              przez-pelnomocnika:
+                type: flag
+                description: 1 – odwołujący działa przez pełnomocnika, 0 – samodzielnie
+                derive: {present: pelnomocnik.imie_nazwisko}
+              pelnomocnik:
+                type: object
+                description: Pełnomocnik odwołującego (zwykle podpisuje odwołanie)
+                hints: ['reprezentowany przez', 'pełnomocnik', 'adw.', 'r.pr.']
+                fields:
+                  imie_nazwisko:
+                    type: person_name
+                    nullable: true
+                  nazwa:
+                    type: text
+                    nullable: true
+                    description: Nazwa kancelarii pełnomocnika
+                    hints: ['Kancelaria']
+                  mail:
+                    type: email
+                    nullable: true
+                    hints: ['e-mail', 'adres do korespondencji elektronicznej']
+
+        Zamawiajacy:
+          type: array
+          min_items: 1
+          description: Zamawiający; przy zamówieniu wspólnym – każdy zamawiający osobno
+          hints: ['Zamawiający:']
+          items:
+            type: object
+            fields:
+              krs:
+                type: krs
+                nullable: true
+                hints: ['KRS']
+              nazwa:
+                type: text
+              nip:
+                type: nip
+                hints: ['NIP']
+              regon:
+                type: regon
+                hints: ['REGON']
+              prowadzacy_postepowanie:
+                type: flag
+                nullable: true
+                description: >-
+                  Tylko przy kilku zamawiających: 1 – zamawiający prowadzący postępowanie
+                  w imieniu pozostałych, 0 – pozostali. Przy jednym zamawiającym null.
+                hints: ['prowadzący postępowanie', 'w imieniu i na rzecz', 'pełnomocnik zamawiających']
+                derive:
+                  override: true          # wartość z dokumentu ma pierwszeństwo
+                  when:
+                    - {if: 'count(../) == 1', then: null}
+
+        ZamowieniePubliczne:
+          type: object
+          fields:
+            numer_bzp:
+              type: numer_bzp
+              nullable: true
+              hints: ['BZP', 'Biuletyn Zamówień Publicznych', 'nr ogłoszenia']
+            numer_postepowania:
+              type: text
+              description: Znak/numer referencyjny postępowania nadany przez zamawiającego, np. ZS.791.2026
+              hints: ['znak sprawy', 'nr postępowania', 'numer referencyjny', 'sygn.']
+            numer_ted:
+              type: numer_ted
+              nullable: true
+              hints: ['TED', 'Dz.U. S', 'Dziennik Urzędowy Unii Europejskiej']
+            tytul:
+              type: text
+              description: Nazwa (przedmiot) zamówienia, bez cudzysłowów
+              hints: ['pn.', 'pod nazwą', 'dotyczy:', 'na:']
+
+  # ───────────────────────────────────────────────────────────────────────────
+  pelnomocnictwo:
+    output_file: pelnomocnictwo.json
+    description: Pełnomocnictwo do reprezentowania wykonawcy przed KIO
+    schema:
+      type: object
+      fields:
+
+        mocodawca:
+          type: array
+          min_items: 1
+          description: Podmiot(y) udzielający pełnomocnictwa
+          hints: ['Mocodawca', 'w imieniu', 'działając w imieniu']
+          items:
+            type: object
+            fields:
+              data:
+                type: object
+                fields:
+                  imie_nazwisko:
+                    type: person_name
+                    nullable: true
+                    description: Tylko dla osoby fizycznej (JDG) – imię i nazwisko przedsiębiorcy
+                  krs:
+                    type: krs
+                    nullable: true
+                    hints: ['KRS']
+                  nazwa:
+                    type: text
+                    description: Nazwa/firma mocodawcy
+                  nip:
+                    type: nip
+                    hints: ['NIP']
+                  typ:
+                    type: enum
+                    values: [osoba_prawna, osoba_fizyczna]
+                    description: osoba_fizyczna – przedsiębiorca wpisany do CEIDG (brak KRS)
+                    derive:
+                      override: true
+                      when:
+                        - {if: 'krs == null and imie_nazwisko != null', then: osoba_fizyczna}
+                        - {else: osoba_prawna}
+              podpisujacy:
+                type: array
+                min_items: 1
+                description: Osoby podpisujące pełnomocnictwo w imieniu mocodawcy
+                hints: ['podpis', 'Prezes Zarządu', 'Członek Zarządu', 'wspólnik']
+                items:
+                  type: object
+                  fields:
+                    imie_nazwisko:
+                      type: person_name
+
+        pelnomocnicy:
+          type: array
+          min_items: 1
+          description: Osoby umocowane (pełnomocnicy)
+          hints: ['udzielam pełnomocnictwa', 'ustanawiam pełnomocnikiem', 'Pełnomocnicy', 'adw.', 'r.pr.']
+          items:
+            type: object
+            fields:
+              imie_nazwisko:
+                type: person_name
+              pesel:
+                type: pesel
+                nullable: true
+                hints: ['PESEL']
+
+  # ───────────────────────────────────────────────────────────────────────────
+  przelew:
+    output_file: przelew.json
+    description: Potwierdzenie przelewu (opłata skarbowa od pełnomocnictwa / wpis)
+    schema:
+      type: object
+      fields:
+
+        przelew_bankowy:
+          type: object
+          fields:
+            data_operacji:
+              type: date
+              description: Data wykonania/księgowania przelewu
+              hints: ['data operacji', 'data transakcji', 'data realizacji', 'data wykonania']
+            kwota:
+              type: amount
+              hints: ['kwota', 'wartość']
+            na_rachunek:
+              type: bank_account
+              description: Rachunek odbiorcy
+              hints: ['na rachunek', 'rachunek odbiorcy', 'rachunek beneficjenta']
+            numer_transakcji:
+              type: text
+              description: Identyfikator transakcji w banku
+              hints: ['numer transakcji', 'nr ref.', 'numer referencyjny', 'identyfikator operacji']
+            tytul:
+              type: text
+              description: Tytuł przelewu – pełny, w jednej linii
+              hints: ['tytuł', 'tytułem', 'opis']
+            z_rachunku:
+              type: bank_account
+              description: Rachunek nadawcy (obciążany)
+              hints: ['z rachunku', 'rachunek nadawcy', 'rachunek obciążany', 'rachunek zleceniodawcy']
