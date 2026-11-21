@@ -35,14 +35,30 @@ def load_data(directory_path):
     return data
 
 class TestDevF1Score:
-    def test_against_verified_jsons_f1score(self, capsys):
+    @pytest.fixture(scope="class")
+    def load_examples(self, capsys):
         with capsys.disabled():
-            example_data = load_data(r"dev\dane")
-            output_data = load_data("output")
+            return load_data(r"dev\dane")
 
-            example_types = [d["document_type"] for d in example_data]
-            output_types = [d["document_type"] for d in output_data]
+    @pytest.fixture(scope="class")
+    def load_output(self, capsys):
+        with capsys.disabled():
+            return load_data("output")
 
-            f1 = f1_score(example_types, output_types)
+    def test_f1score_document_type(self, capsys, load_examples, load_output):
+        example_types = [d["document_type"] for d in load_examples]
+        output_types = [d["document_type"] for d in load_output]
+
+        f1 = f1_score(example_types, output_types, average="weighted")
+        with capsys.disabled():
             print(f"\nF1 score (document_type): {f1}")
+        assert True
+
+    def test_f1score_json(self, capsys, load_examples, load_output):
+        example_jsons = [d["json"] for d in load_examples]
+        output_jsons = [d["json"] for d in load_output]
+
+        f1 = f1_score(example_jsons, output_jsons, average="weighted")
+        with capsys.disabled():
+            print(f"\nF1 score (jsons): {f1}")
         assert True
