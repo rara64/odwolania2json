@@ -6,6 +6,3 @@
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 !*.code-workspace
-.wymagania/*
-.*/__pycache__/*
-dev/dane/skany/*
