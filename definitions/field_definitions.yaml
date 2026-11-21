@@ -1,0 +1,279 @@
+# Definicje typów pól + walidacja (regex + checksumy)
+# Składnia regexów: zgodna z Python `re` / PCRE / JS (bez \p{..}, polskie litery jawnie).
+# Kolejność walidacji: normalize -> regex -> checksum -> semantic.
+version: 1
+
+# --- Wspólne -----------------------------------------------------------------
+defs:
+  pl_upper: "A-ZĄĆĘŁŃÓŚŹŻ"
+  pl_lower: "a-ząćęłńóśźż"
+
+# --- Typy --------------------------------------------------------------------
+types:
+
+  nip:
+    # Numer Identyfikacji Podatkowej (10 cyfr)
+    json_type: string            # string, żeby nie gubić zer wiodących
+    normalize:                   # usuń prefiks PL, myślniki, spacje
+      - strip
+      - remove: "[\\s-]"
+      - remove_prefix: "PL"
+    regex: '^\d{10}$'
+    checksum:
+      algorithm: weighted_sum_mod
+      weights: [6, 5, 7, 2, 3, 4, 5, 6, 7]
+      modulus: 11
+      check_digit_index: 9
+      invalid_if_remainder: [10]   # reszta 10 => NIP niepoprawny
+
+  regon:
+    # REGON – 9 lub 14 cyfr (14 = 9 + 5 cyfr jednostki lokalnej)
+    json_type: string
+    normalize:
+      - strip
+      - remove: "[\\s-]"
+    regex: '^(\d{9}|\d{14})$'
+    variants:
+      regon9:
+        regex: '^\d{9}$'
+        checksum:
+          algorithm: weighted_sum_mod
+          weights: [8, 9, 2, 3, 4, 5, 6, 7]
+          modulus: 11
+          check_digit_index: 8
+          remainder_10_as: 0
+      regon14:
+        regex: '^\d{14}$'
+        checksum:
+          algorithm: weighted_sum_mod
+          weights: [2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8]
+          modulus: 11
+          check_digit_index: 13
+          remainder_10_as: 0
+          also_validate_prefix: regon9   # pierwsze 9 cyfr musi być poprawnym REGON-9
+
+  krs:
+    # Numer KRS – 10 cyfr, uzupełniany zerami z lewej; brak cyfry kontrolnej
+    json_type: string
+    normalize:
+      - strip
+      - remove: "[\\s-]"
+      - left_pad: {width: 10, char: "0"}
+    regex: '^\d{10}$'
+    semantic:
+      - not_all_zeros
+
+  pesel:
+    # PESEL (11 cyfr; zawiera datę urodzenia i płeć)
+    json_type: string            # NIE number – zera wiodące (np. 02070803628)
+    normalize:
+      - strip
+      - remove: "[\\s-]"
+      - left_pad: {width: 11, char: "0"}
+    regex: '^\d{11}$'
+    checksum:
+      algorithm: weighted_sum_mod
+      weights: [1, 3, 7, 9, 1, 3, 7, 9, 1, 3]
+      modulus: 10
+      check_digit_index: 10
+      formula: "(10 - (sum % 10)) % 10"
+    semantic:
+      - birth_date_from_pesel:
+          month_offsets: {1800: 80, 1900: 0, 2000: 20, 2100: 40, 2200: 60}
+          # miesiąc (cyfry 3-4) - offset => 01..12; dzień musi istnieć w kalendarzu
+      - sex_from_digit_10: {even: K, odd: M}
+
+  nrb:
+    # Polski numer rachunku bankowego (NRB), 26 cyfr, bez prefiksu PL
+    json_type: string
+    normalize:
+      - strip
+      - remove: "[\\s-]"
+      - remove_prefix: "PL"
+    regex: '^\d{26}$'
+    checksum:
+      algorithm: iban_mod97
+      country_code: PL
+      country_numeric: "2521"
+      # liczba = NRB[2:] + "2521" + NRB[:2];  liczba % 97 == 1
+      expected_remainder: 1
+    extra:
+      bank_branch_id: {slice: [2, 10]}   # 8 cyfr: nr rozliczeniowy banku
+      branch_checksum:                    # cyfra kontrolna numeru rozliczeniowego (pozycja 10)
+        weights: [3, 9, 7, 1, 3, 9, 7]
+        modulus: 10
+
+  iban_pl:
+    # IBAN polski (PL + 26 cyfr)
+    json_type: string
+    normalize:
+      - strip
+      - remove: "[\\s-]"
+      - uppercase
+    regex: '^PL\d{26}$'
+    checksum:
+      algorithm: iban_mod97
+      expected_remainder: 1
+
+  # --- Zamówienia publiczne ---------------------------------------------------
+  numer_bzp:
+    # Numer ogłoszenia BZP: YYYY/BZP ######## (opcjonalnie /NN dla korekt)
+    json_type: string
+    normalize:
+      - strip
+      - uppercase
+      - remove: "\\s"
+    regex: '^(20\d{2})/BZP(\d{8})(/\d{2})?$'
+    raw_regex: '^\s*(20\d{2})\s*/\s*BZP\s*(\d{8})(\s*/\s*\d{2})?\s*$'
+    semantic:
+      - year_between: [2021, "current_year+1"]
+    notes: "Nie wpisywać numerów TED."
+
+  numer_ted:
+    # Numer ogłoszenia TED: NNNNNN-YYYY (alt: YYYY/S ###-NNNNNN -> normalizuj)
+    json_type: string
+    normalize:
+      - strip
+      - convert:
+          from_regex: '^(\d{4})/S\s?\d{3}-(\d{6})$'
+          to: '\2-\1'
+    regex: '^\d{6}-(20\d{2})$'
+    semantic:
+      - year_between: [2015, "current_year+1"]
+
+  numer_postepowania:
+    # Numer referencyjny postępowania, np. ZP.039.2025, DZP.260.11.2025, ZSCKR/822/2025
+    json_type: string
+    normalize:
+      - strip
+      - collapse_whitespace
+    regex: '^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż][A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż .\/\-_()]{1,59}$'
+    semantic:
+      - must_contain_digit
+
+  czynnosc_powod_id:
+    # Identyfikator zaskarżonej czynności (1–12), tylko z pierwszego zarzutu
+    json_type: integer
+    regex: '^(?:[1-9]|1[0-2])$'
+    enum:
+      1: Decyzja o odrzuceniu oferty
+      2: Ogłoszenie wyboru oferty
+      3: Decyzja o wykluczeniu wykonawcy
+      4: Publikacja specyfikacji warunków zamówienia (SWZ)
+      5: Modyfikacja treści SWZ
+      6: Odpowiedzi/wyjaśnienia do SWZ
+      7: Zaniechanie odrzucenia oferty
+      8: Zaniechanie wykluczenia wykonawcy
+      9: Decyzja o unieważnieniu postępowania
+      10: Zaniechanie unieważnienia postępowania
+      11: Opis przedmiotu zamówienia (OPZ)
+      12: Projektowane postanowienia umowy
+    cross_field:
+      - "czynnosc_opis == enum[czynnosc_powod_id]"   # opis 1:1 z id
+
+  # --- Wspólne typy ogólne ----------------------------------------------------
+  data_iso:
+    # Data ISO 8601 (YYYY-MM-DD)
+    json_type: string
+    regex: '^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$'
+    semantic:
+      - valid_calendar_date        # odrzuca 2025-02-30
+
+  data_pl:
+    # Data w formacie polskim DD.MM.RRRR (nagłówek pisma) -> konwertuj do data_iso
+    json_type: string
+    regex: '^(0[1-9]|[12]\d|3[01])\.(0[1-9]|1[0-2])\.((?:19|20)\d{2})$'
+    semantic:
+      - valid_calendar_date
+    convert_to: {type: data_iso, from_regex: '^(\d{2})\.(\d{2})\.(\d{4})$', to: '\3-\2-\1'}
+
+  kwota_pln:
+    # Kwota z maks. 2 miejscami po przecinku
+    json_type: number
+    regex: '^(?:0|[1-9]\d{0,14})(?:\.\d{1,2})?$'
+    semantic:
+      - min: 0.01
+
+  email:
+    # Adres e-mail (praktyczny wariant RFC 5322)
+    json_type: string
+    normalize: [strip, lowercase]
+    regex: '^[a-z0-9._%+\-]{1,64}@(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$'
+
+  imie_nazwisko:
+    # Imię i nazwisko osoby fizycznej (mianownik; myślniki i nazwiska dwuczłonowe dozwolone)
+    json_type: string
+    normalize: [strip, collapse_whitespace]
+    regex: '^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:[-\x27][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)*(?: [A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:[-\x27][A-ZĄĆĘŁŃÓŚŹŻ]?[a-ząćęłńóśźż]+)*)+$'
+
+  nazwa_podmiotu:
+    # Nazwa firmy / instytucji (tekst swobodny)
+    json_type: string
+    normalize: [strip, collapse_whitespace]
+    regex: '^\S.{1,299}$'
+
+  miejscowosc:
+    # Nazwa miejscowości
+    json_type: string
+    normalize: [strip, collapse_whitespace]
+    regex: '^[A-ZĄĆĘŁŃÓŚŹŻ][A-Za-ząćęłńóśźż]*(?:[ \-][A-Za-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ.]+)*$'
+
+  flag_01:
+    # Flaga logiczna 1/0
+    json_type: integer
+    regex: '^[01]$'
+
+  flag_01_nullable:
+    # Tri-state 1/0/null (np. prowadzacy_postepowanie; null = brak informacji)
+    json_type: [integer, "null"]
+    regex: '^[01]$'
+    nullable: true
+
+  tytul_przelewu:
+    # Tytuł przelewu bankowego (tekst swobodny, limit 140 znaków wg standardu Elixir, tu luźniej)
+    json_type: string
+    regex: '^\S[\s\S]{0,255}$'
+
+# --- Mapowanie pól dokumentów -> typy ------------------------------------------
+fields:
+  OdwolanieKIO:
+    data: data_iso
+    czynnosc_dzien: {type: data_iso, nullable: true}
+    czynnosc_powod_id: czynnosc_powod_id
+    czynnosc_opis: nazwa_podmiotu
+    miejscowosc: miejscowosc
+  Odwolujacy[]:
+    krs: {type: krs, nullable: true}
+    nazwa: nazwa_podmiotu
+    nip: {type: nip, nullable: true}
+    regon: {type: regon, nullable: true}
+    przez-pelnomocnika: flag_01
+    pelnomocnik:
+      imie_nazwisko: imie_nazwisko
+      nazwa: nazwa_podmiotu
+      mail: email
+  Zamawiajacy[]:
+    krs: {type: krs, nullable: true}
+    nazwa: nazwa_podmiotu
+    nip: {type: nip, nullable: true}
+    regon: {type: regon, nullable: true}
+    prowadzacy_postepowanie: flag_01_nullable
+  ZamowieniePubliczne:
+    numer_bzp: {type: numer_bzp, nullable: true}
+    numer_postepowania: {type: numer_postepowania, nullable: true}
+    numer_ted: {type: numer_ted, nullable: true}
+    tytul: {type: nazwa_podmiotu, nullable: true}
+  pelnomocnictwo:
+    mocodawca[].data.krs: krs
+    mocodawca[].data.nip: nip
+    mocodawca[].data.imie_nazwisko: {type: imie_nazwisko, nullable: true}
+    mocodawca[].podpisujacy[].imie_nazwisko: imie_nazwisko
+    pelnomocnicy[].imie_nazwisko: imie_nazwisko
+    pelnomocnicy[].pesel: pesel
+  przelew_bankowy:
+    data_operacji: data_iso
+    kwota: kwota_pln
+    na_rachunek: nrb
+    z_rachunku: nrb
+    numer_transakcji: {type: nazwa_podmiotu, nullable: true}
+    tytul: tytul_przelewu
