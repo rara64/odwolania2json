@@ -6,6 +6,13 @@ Projekt realizuje automatyczną transformację wielodokumentowych spraw administ
 
 Rozwiązanie działa w **100% lokalnie (on-premise)**, nie wymaga karty graficznej (GPU) ani zewnętrznych płatnych usług chmurowych, zapewniając pełne bezpieczeństwo danych i zgodność z wymaganiami technicznymi konkursu.
 
+## TL;DR
+
+- **Przeznaczenie:** automatyczna ekstrakcja danych odwołań, pełnomocnictw i przelewów do JSON.
+- **Działanie:** lokalny potok PDF → tekst/OCR → klasyfikacja → ekstrakcja pól → walidacja i zapis.
+- **Jakość:** testy bronią regresji jakości F1 — minimum **0.85 Micro F1**, **0.90 dla odwołań**, **0.85 dla przelewów** i **0.55 dla pełnomocnictw**.
+- **Uruchomienie:** `start.bat` w Windows lub `./start.sh` na Linux/macOS.
+
 ---
 
 ## Spis treści
@@ -32,10 +39,10 @@ Rozwiązanie działa w **100% lokalnie (on-premise)**, nie wymaga karty graficzn
 
 - **Hybrydowa ekstrakcja tekstu**: obsługa natywnych dokumentów cyfrowych PDF (poprzez `pypdfium2` / `Docling`) oraz skanów papierowych i faksów (silnik OCR `RapidOCR` + `onnxruntime` z automatycznym wykrywaniem skanu, prostowaniem i korektą kąta obrotu tekstu).
 - **Klasyfikacja dokumentów**: bezbłędne rozpoznawanie typów pism (`odwolanie`, `pelnomocnictwo`, `przelew`) oraz precyzyjne odrzucanie dokumentów niepasujących / negatywnych (zwracających `{}`).
-- **Deklaratywna ekstrakcja regułowa**: definicje pól, sekcji, wzorców wyrażeń regularnych i logiki biznesowej zawarte w plikach konfiguracyjnych YAML (`definitions/`) â€“ brak konieczności zmian w kodzie Pythona przy rozszerzaniu systemu.
+- **Deklaratywna ekstrakcja regułowa**: definicje pól, sekcji, wzorców wyrażeń regularnych i logiki biznesowej zawarte w plikach konfiguracyjnych YAML (`definitions/`) – brak konieczności zmian w kodzie Pythona przy rozszerzaniu systemu.
 - **Normalizacja i lematyzacja języka polskiego**: standaryzacja formatów dat, kwot pieniężnych, numerów NIP, REGON, PESEL, KRS, numerów BZP/TED oraz lematyzacja nazwisk i form deklinacyjnych za pomocą biblioteki `morfeusz2`.
 - **Wbudowany interfejs graficzny Web GUI**: aplikacja przeglądarkowa do podglądu PDF i wygenerowanych danych JSON obok siebie, z wizualną atrybucją (provenance) oraz wbudowanym edytorem reguł YAML w czasie rzeczywistym.
-- **Zgodność ze strukturą wejścia/wyjścia**: automatyczne mapowanie hierarchii katalogów `input/<sprawa>/<plik>.pdf` â†’ `output/<sprawa>/<plik>.json`.
+- **Zgodność ze strukturą wejścia/wyjścia**: automatyczne mapowanie hierarchii katalogów `input/<sprawa>/<plik>.pdf` → `output/<sprawa>/<plik>.json`.
 
 ---
 
@@ -64,33 +71,33 @@ flowchart TD
 - Klasyfikator bada zawartość wyekstrahowanego tekstu na podstawie reguł określonych w `pipeline/document-classifier/rules.yaml`.
 - Analizuje wagi słów kluczowych, nagłówków, fraz charakterystycznych i wykluczeń.
 - Dostępne klasy:
-  - `odwolanie` â€“ odwołanie do Prezesa Krajowej Izby Odwoławczej,
-  - `pelnomocnictwo` â€“ pełnomocnictwo procesowe do reprezentowania wykonawcy,
-  - `przelew` â€“ potwierdzenie uiszczenia wpisu od odwołania lub opłaty skarbowej,
-  - `None` (dokument negatywny) â€“ pisma niepodlegające ekstrakcji (np. wnioski dowodowe, pisma przewodnie, załączniki techniczne).
+  - `odwolanie` – odwołanie do Prezesa Krajowej Izby Odwoławczej,
+  - `pelnomocnictwo` – pełnomocnictwo procesowe do reprezentowania wykonawcy,
+  - `przelew` – potwierdzenie uiszczenia wpisu od odwołania lub opłaty skarbowej,
+  - `None` (dokument negatywny) – pisma niepodlegające ekstrakcji (np. wnioski dowodowe, pisma przewodnie, załączniki techniczne).
 
 ### 3. Ekstrakcja pól, normalizacja i pola wyliczane (`pipeline/json-exporter`)
 - Na podstawie `definitions/field_definitions.yaml` lokalizowane są odpowiednie sekcje dokumentu (np. Odwołujący, Zamawiający, Pełnomocnik, Przedmiot zamówienia).
 - Wartości są dopasowywane wzorcami regułowymi i kontekstowymi podpowiedziami (`hints`).
 - **Normalizacja formatów** (`definitions/formats.yaml`):
-  - Daty konwertowane do standardu ISO `YYYY-MM-DD` (obsługa miesięcy słownie w języku polskim, np. â€ž15 marca 2026 r.â€ť).
-  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` â†’ `1200.5`).
+  - Daty konwertowane do standardu ISO `YYYY-MM-DD` (obsługa miesięcy słownie w języku polskim, np. „15 marca 2026 r.”).
+  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` → `1200.5`).
   - Identyfikatory: NIP (usunięcie kresek/prefiksu PL), KRS (dopełnienie do 10 cyfr), BZP, TED.
-  - Imiona i nazwiska: lematyzacja mianownika z wykorzystaniem słownika morfologicznego `morfeusz2` (np. â€žJana Kowalskiegoâ€ť â†’ â€žJan Kowalskiâ€ť).
+  - Imiona i nazwiska: lematyzacja mianownika z wykorzystaniem słownika morfologicznego `morfeusz2` (np. „Jana Kowalskiego” → „Jan Kowalski”).
 - **Pola wyliczane i powiązania** (`definitions/derivations.yaml`):
   - Uzupełnianie wartości domyślnych, relacji i sum na podstawie innych pól dokumentu.
 
 ### 4. Zapis wyniku do `output/`
-- Wynikowy plik JSON jest zapisywany w identycznej ścieżce poddrzewa w katalogu `output/` (np. `input/case1/skan.pdf` â†’ `output/case1/skan.json`).
+- Wynikowy plik JSON jest zapisywany w identycznej ścieżce poddrzewa w katalogu `output/` (np. `input/case1/skan.pdf` → `output/case1/skan.json`).
 - W przypadku dokumentu niesklasyfikowanego (negatywnego) lub błędu, tworzony jest poprawny pusty obiekt JSON (`{}`), zgodnie ze specyfikacją wyzwania.
 
 ---
 
 ## Wymagania systemowe
 
-- **Python**: wersja **3.13+** (rekomendowana; system działa także na 3.10â€“3.15).
+- **Python**: wersja **3.13+** (rekomendowana; system działa także na 3.10–3.15).
 - **System operacyjny**: Windows 10/11, Linux (Ubuntu/Debian/Fedora) lub macOS.
-- **Pamięć RAM**: minimum 4 GB (rekomendowane 8â€“16 GB dla dużych wielostronicowych skanów OCR).
+- **Pamięć RAM**: minimum 4 GB (rekomendowane 8–16 GB dla dużych wielostronicowych skanów OCR).
 - **Sprzęt**: procesor x86_64 / ARM64, **brak konieczności posiadania karty GPU**.
 - **Dostęp do sieci**: wymagany wyłącznie podczas pierwszego pobierania pakietów przez `pip`. Całe działanie aplikacji odbywa się **offline / on-premise**.
 
@@ -196,10 +203,10 @@ python main.py input output -v --report-dir reports
 ```
 
 Dostępne parametry `main.py`:
-- `input` â€“ ścieżka do katalogu wejściowego (domyślnie `./input`).
-- `output` â€“ ścieżka do katalogu wyjściowego (domyślnie `./output`).
-- `--report-dir KATALOG` â€“ zapisuje szczegółowe raporty diagnostyczne i atrybucji dla każdego pliku (`<plik>.report.json`).
-- `-v`, `--verbose` â€“ włącza szczegółowe logowanie każdego kroku przetwarzania (OCR, klasyfikacja, dopasowanie reguł).
+- `input` – ścieżka do katalogu wejściowego (domyślnie `./input`).
+- `output` – ścieżka do katalogu wyjściowego (domyślnie `./output`).
+- `--report-dir KATALOG` – zapisuje szczegółowe raporty diagnostyczne i atrybucji dla każdego pliku (`<plik>.report.json`).
+- `-v`, `--verbose` – włącza szczegółowe logowanie każdego kroku przetwarzania (OCR, klasyfikacja, dopasowanie reguł).
 
 ---
 
@@ -253,39 +260,39 @@ run_venv.bat pytest
 
 ```text
 odwolania2json/
-â”śâ”€â”€ definitions/                     # Deklaratywne reguły biznesowe w YAML
-â”‚   â”śâ”€â”€ documents.yaml               # Rejestr obsługiwanych klas dokumentów i plików wyjściowych
-â”‚   â”śâ”€â”€ field_definitions.yaml       # Definicje pól JSON, sekcji, etykiet i wzorców regex
-â”‚   â”śâ”€â”€ formats.yaml                 # Formaty wartości (daty, NIP, PESEL, kwoty, normalizacja)
-â”‚   â”śâ”€â”€ lookups.yaml                 # Słowniki wartości kanonicznych
-â”‚   â””â”€â”€ derivations.yaml             # Reguły pól wyliczanych i wartości domyślnych
-â”śâ”€â”€ dev/                             # Przykładowe dane testowe i treningowe
-â”‚   â””â”€â”€ dane/                        # Zbiór spraw (odwołania, pełnomocnictwa, skany, negatywne)
-â”śâ”€â”€ gui/                             # Interfejs graficzny użytkownika
-â”‚   â””â”€â”€ index.html                   # Aplikacja Single Page Application (HTML5/JS/CSS)
-â”śâ”€â”€ pipeline/                        # Moduły potoku przetwarzania
-â”‚   â”śâ”€â”€ data_extraction/             # Ekstrakcja tekstu z PDF (pypdfium2 / RapidOCR / deskewing)
-â”‚   â”śâ”€â”€ document-classifier/         # Klasyfikator dokumentów oraz rules.yaml
-â”‚   â””â”€â”€ json-exporter/               # Budowanie modelu JSON, conformer, ewaluacja reguł
-â”śâ”€â”€ tests/                           # Zestaw testów jednostkowych i ewaluacyjnych
-â”‚   â”śâ”€â”€ test_json_exporter.py        # Testy jednostkowe normalizacji i eksportera
-â”‚   â”śâ”€â”€ test_dev_f1score.py          # Ewaluacja F1-score na danych referencyjnych
-â”‚   â”śâ”€â”€ test_scans_f1score.py        # Ewaluacja jakości OCR na skanach
-â”‚   â””â”€â”€ compare.py                   # Narzędzie CLI do porównywania JSON z referencją
-â”śâ”€â”€ wymagania/                       # Specyfikacja zadania i dokumentacja UZP
-â”śâ”€â”€ gui_server.py                    # Lokalny serwer HTTP obsługujący Web GUI i REST API
-â”śâ”€â”€ main.py                          # Punkt wejścia aplikacji CLI (wsadowe przetwarzanie input/output)
-â”śâ”€â”€ requirements.txt                 # Wymagane biblioteki produkcyjne
-â”śâ”€â”€ requirements-dev.txt             # Biblioteki deweloperskie i testowe (pytest, scikit-learn)
-â”śâ”€â”€ setup_venv.bat                   # Skrypt instalacji środowiska .venv (Windows)
-â”śâ”€â”€ setup_venv.sh                    # Skrypt instalacji środowiska .venv (Linux/macOS)
-â”śâ”€â”€ run_venv.bat                     # Skrypt uruchamiania poleceń w .venv (Windows)
-â”śâ”€â”€ run_venv.sh                      # Skrypt uruchamiania poleceń w .venv (Linux/macOS)
-â”śâ”€â”€ start.bat                        # Uruchomienie przetwarzania wsadowego CLI (Windows)
-â”śâ”€â”€ start.sh                         # Uruchomienie przetwarzania wsadowego CLI (Linux/macOS)
-â”śâ”€â”€ start_gui.bat                    # Uruchomienie serwera Web GUI (Windows)
-â”śâ”€â”€ start_gui.sh                     # Uruchomienie serwera Web GUI (Linux/macOS)
-â””â”€â”€ README.md                        # Niniejsza dokumentacja
+├── definitions/                     # Deklaratywne reguły biznesowe w YAML
+│   ├── documents.yaml               # Rejestr obsługiwanych klas dokumentów i plików wyjściowych
+│   ├── field_definitions.yaml       # Definicje pól JSON, sekcji, etykiet i wzorców regex
+│   ├── formats.yaml                 # Formaty wartości (daty, NIP, PESEL, kwoty, normalizacja)
+│   ├── lookups.yaml                 # Słowniki wartości kanonicznych
+│   └── derivations.yaml             # Reguły pól wyliczanych i wartości domyślnych
+├── dev/                             # Przykładowe dane testowe i treningowe
+│   └── dane/                        # Zbiór spraw (odwołania, pełnomocnictwa, skany, negatywne)
+├── gui/                             # Interfejs graficzny użytkownika
+│   └── index.html                   # Aplikacja Single Page Application (HTML5/JS/CSS)
+├── pipeline/                        # Moduły potoku przetwarzania
+│   ├── data_extraction/             # Ekstrakcja tekstu z PDF (pypdfium2 / RapidOCR / deskewing)
+│   ├── document-classifier/         # Klasyfikator dokumentów oraz rules.yaml
+│   └── json-exporter/               # Budowanie modelu JSON, conformer, ewaluacja reguł
+├── tests/                           # Zestaw testów jednostkowych i ewaluacyjnych
+│   ├── test_json_exporter.py        # Testy jednostkowe normalizacji i eksportera
+│   ├── test_dev_f1score.py          # Ewaluacja F1-score na danych referencyjnych
+│   ├── test_scans_f1score.py        # Ewaluacja jakości OCR na skanach
+│   └── compare.py                   # Narzędzie CLI do porównywania JSON z referencją
+├── wymagania/                       # Specyfikacja zadania i dokumentacja UZP
+├── gui_server.py                    # Lokalny serwer HTTP obsługujący Web GUI i REST API
+├── main.py                          # Punkt wejścia aplikacji CLI (wsadowe przetwarzanie input/output)
+├── requirements.txt                 # Wymagane biblioteki produkcyjne
+├── requirements-dev.txt             # Biblioteki deweloperskie i testowe (pytest, scikit-learn)
+├── setup_venv.bat                   # Skrypt instalacji środowiska .venv (Windows)
+├── setup_venv.sh                    # Skrypt instalacji środowiska .venv (Linux/macOS)
+├── run_venv.bat                     # Skrypt uruchamiania poleceń w .venv (Windows)
+├── run_venv.sh                      # Skrypt uruchamiania poleceń w .venv (Linux/macOS)
+├── start.bat                        # Uruchomienie przetwarzania wsadowego CLI (Windows)
+├── start.sh                         # Uruchomienie przetwarzania wsadowego CLI (Linux/macOS)
+├── start_gui.bat                    # Uruchomienie serwera Web GUI (Windows)
+├── start_gui.sh                     # Uruchomienie serwera Web GUI (Linux/macOS)
+└── README.md                        # Niniejsza dokumentacja
 ```
 
 ---
