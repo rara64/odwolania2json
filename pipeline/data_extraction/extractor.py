@@ -9,7 +9,8 @@ Użycie:
 Wynik ma schemat DoclingDocument (`texts`, `tables`, `pages`, `prov` z `bbox`) uzupełniony
 o gotowy tekst, Markdown i metadane.
 
-- PDF cyfrowy: Docling (struktura, tabele), tekst z warstwy tekstowej pypdfium2 (linie jak w PDF).
+- PDF cyfrowy: tekst z warstwy tekstowej pypdfium2 (linie jak w PDF); z ODW_DOCLING=1 dodatkowo
+  Docling (struktura, tabele, Markdown) – wolne, a potok z tego nie korzysta.
 - PDF ze skanowanymi stronami (wydruk zeskanowany, krzywy, z pieczątkami): odczyt per strona –
   warstwa tekstowa pypdfium2 albo własny OCR linii (wyprostowanie strony, RapidOCR, ponowne
   rozpoznanie słabych fragmentów, złożenie w linie, korekta słownikowa typowych błędów OCR).
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import gc
 import logging
+import os
 import re
 import time
 import unicodedata
@@ -34,6 +36,10 @@ MIN_TEXT_CHARS = 50  # mniej znaków w warstwie tekstowej => strona traktowana j
 PREVIEW_PAGES = 3  # liczba stron w `first_3_pages_markdown`
 OCR_RENDER_SCALE = 2.5  # skala renderowania skanu do OCR (~180 DPI; przy 1.5 gubione były polskie znaki)
 CPU_THREADS = 4
+# Docling (układ strony, tabele, Markdown) dla PDF-ów cyfrowych. Potok korzysta tylko z `text`, który i tak
+# pochodzi z warstwy tekstowej pypdfium2, a Docling kosztuje 2–30 s na plik – domyślnie wyłączony.
+# Włączenie: ODW_DOCLING=1 (np. gdy potrzebne są `tables` / `markdown` w wyniku).
+USE_DOCLING = os.environ.get("ODW_DOCLING", "").strip().lower() in ("1", "true", "yes")
 
 # OCR skanów (strony bez warstwy tekstowej)
 DESKEW_MAX_ANGLE = 6.0  # szukany kąt przekrzywienia skanu (stopnie, w obie strony)
@@ -84,9 +90,10 @@ def inspect_pages(path: Path) -> PageLayout:
 class PdfExtractor:
     """Lekki ekstraktor PDF -> dict. Konwerter Docling i silnik OCR są tworzone leniwie i współdzielone."""
 
-    def __init__(self, ocr_enabled: bool = True, ocr_lang: list[str] | None = None):
+    def __init__(self, ocr_enabled: bool = True, ocr_lang: list[str] | None = None, use_docling: bool | None = None):
         self.ocr_enabled = ocr_enabled
         self.ocr_lang = ocr_lang or ["pl"]
+        self.use_docling = USE_DOCLING if use_docling is None else use_docling
         self.backend = resolve_ocr_backend()
         self._converter = None
         self._ocr_engine = None
@@ -113,6 +120,17 @@ class PdfExtractor:
                 gc.collect()
             result["metadata"] = self._metadata(path, layout, result, ocr_applied, start, status, extra)
             return result
+
+        if not self.use_docling:
+            # PDF cyfrowy: same linie warstwy tekstowej (ten sam `text`, co ścieżka Docling, bez jej kosztu)
+            try:
+                result, ocr_applied = self._extract_fallback(path, layout, last_page)
+                if result["text"].strip():
+                    result["metadata"] = self._metadata(path, layout, result, ocr_applied, start, "success",
+                                                        {"method": "text_layer"})
+                    return result
+            except Exception as exc:
+                logger.debug("Odczyt warstwy tekstowej nie powiódł się dla %s (%s) - próba Docling.", path.name, exc)
 
         try:
             result = self._extract_with_docling(path, (1, last_page) if max_pages else None, layout, last_page)
@@ -318,8 +336,10 @@ class PdfExtractor:
             if self.backend != "onnxruntime":
                 raise RuntimeError("Brak backendu OCR – zainstaluj onnxruntime.")
             self._ocr_engine = RapidOCR(params={
-                f"{stage}.engine_type": EngineType.ONNXRUNTIME
-                for stage in ("Det", "Cls", "Rec")
+                **{f"{stage}.engine_type": EngineType.ONNXRUNTIME for stage in ("Det", "Cls", "Rec")},
+                # bez limitu ONNX Runtime bierze wszystkie rdzenie – przy kilku procesach main.py to przeciążenie CPU
+                "EngineConfig.onnxruntime.intra_op_num_threads": CPU_THREADS,
+                "EngineConfig.onnxruntime.inter_op_num_threads": 1,
             })
         return self._ocr_engine
 

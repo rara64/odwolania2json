@@ -41,7 +41,7 @@ Rozwiązanie działa w **100% lokalnie (on-premise)**, nie wymaga karty graficzn
 
 ## Sposób działania (Architektura potoku)
 
-Dla każdego pliku PDF umieszczonego w katalogu `input/` aplikacja wykonuje sekwencyjnie 4-etapowy proces przetwarzania:
+Dla każdego pliku PDF umieszczonego w katalogu `input/` aplikacja wykonuje (równolegle dla wielu plików) 4-etapowy proces przetwarzania:
 
 ```mermaid
 flowchart TD
@@ -200,6 +200,9 @@ Dostępne parametry `main.py`:
 - `output` â€“ ścieżka do katalogu wyjściowego (domyślnie `./output`).
 - `--report-dir KATALOG` â€“ zapisuje szczegółowe raporty diagnostyczne i atrybucji dla każdego pliku (`<plik>.report.json`).
 - `-v`, `--verbose` â€“ włącza szczegółowe logowanie każdego kroku przetwarzania (OCR, klasyfikacja, dopasowanie reguł).
+- `-j N`, `--jobs N` – liczba równoległych procesów (domyślnie połowa rdzeni logicznych, maks. 4; `-j 1` = sekwencyjnie). Wyniki są zapisywane w kolejności plików wejściowych, więc są identyczne jak przy pracy sekwencyjnej.
+
+Zmienna środowiskowa `ODW_DOCLING=1` włącza analizę struktury PDF-ów cyfrowych przez Docling (tabele, Markdown). Domyślnie jest wyłączona: potok korzysta wyłącznie z tekstu warstwy tekstowej (pypdfium2), który jest identyczny w obu trybach, a Docling kosztuje 2–30 s na plik.
 
 ---
 
