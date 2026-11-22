@@ -32,10 +32,10 @@ Rozwiązanie działa w **100% lokalnie (on-premise)**, nie wymaga karty graficzn
 
 - **Hybrydowa ekstrakcja tekstu**: obsługa natywnych dokumentów cyfrowych PDF (poprzez `pypdfium2` / `Docling`) oraz skanów papierowych i faksów (silnik OCR `RapidOCR` + `onnxruntime` z automatycznym wykrywaniem skanu, prostowaniem i korektą kąta obrotu tekstu).
 - **Klasyfikacja dokumentów**: bezbłędne rozpoznawanie typów pism (`odwolanie`, `pelnomocnictwo`, `przelew`) oraz precyzyjne odrzucanie dokumentów niepasujących / negatywnych (zwracających `{}`).
-- **Deklaratywna ekstrakcja regułowa**: definicje pól, sekcji, wzorców wyrażeń regularnych i logiki biznesowej zawarte w plikach konfiguracyjnych YAML (`definitions/`) â€“ brak konieczności zmian w kodzie Pythona przy rozszerzaniu systemu.
+- **Deklaratywna ekstrakcja regułowa**: definicje pól, sekcji, wzorców wyrażeń regularnych i logiki biznesowej zawarte w plikach konfiguracyjnych YAML (`definitions/`) - brak konieczności zmian w kodzie Pythona przy rozszerzaniu systemu.
 - **Normalizacja i lematyzacja języka polskiego**: standaryzacja formatów dat, kwot pieniężnych, numerów NIP, REGON, PESEL, KRS, numerów BZP/TED oraz lematyzacja nazwisk i form deklinacyjnych za pomocą biblioteki `morfeusz2`.
 - **Wbudowany interfejs graficzny Web GUI**: aplikacja przeglądarkowa do podglądu PDF i wygenerowanych danych JSON obok siebie, z wizualną atrybucją (provenance) oraz wbudowanym edytorem reguł YAML w czasie rzeczywistym.
-- **Zgodność ze strukturą wejścia/wyjścia**: automatyczne mapowanie hierarchii katalogów `input/<sprawa>/<plik>.pdf` â†’ `output/<sprawa>/<plik>.json`.
+- **Zgodność ze strukturą wejścia/wyjścia**: automatyczne mapowanie hierarchii katalogów `input/<sprawa>/<plik>.pdf` => `output/<sprawa>/<plik>.json`.
 
 ---
 
@@ -64,17 +64,17 @@ flowchart TD
 - Klasyfikator bada zawartość wyekstrahowanego tekstu na podstawie reguł określonych w `pipeline/document-classifier/rules.yaml`.
 - Analizuje wagi słów kluczowych, nagłówków, fraz charakterystycznych i wykluczeń.
 - Dostępne klasy:
-  - `odwolanie` â€“ odwołanie do Prezesa Krajowej Izby Odwoławczej,
-  - `pelnomocnictwo` â€“ pełnomocnictwo procesowe do reprezentowania wykonawcy,
-  - `przelew` â€“ potwierdzenie uiszczenia wpisu od odwołania lub opłaty skarbowej,
-  - `None` (dokument negatywny) â€“ pisma niepodlegające ekstrakcji (np. wnioski dowodowe, pisma przewodnie, załączniki techniczne).
+  - `odwolanie` - odwołanie do Prezesa Krajowej Izby Odwoławczej,
+  - `pelnomocnictwo` - pełnomocnictwo procesowe do reprezentowania wykonawcy,
+  - `przelew` - potwierdzenie uiszczenia wpisu od odwołania lub opłaty skarbowej,
+  - `None` (dokument negatywny) - pisma niepodlegające ekstrakcji (np. wnioski dowodowe, pisma przewodnie, załączniki techniczne).
 
 ### 3. Ekstrakcja pól, normalizacja i pola wyliczane (`pipeline/json-exporter`)
 - Na podstawie `definitions/field_definitions.yaml` lokalizowane są odpowiednie sekcje dokumentu (np. Odwołujący, Zamawiający, Pełnomocnik, Przedmiot zamówienia).
 - Wartości są dopasowywane wzorcami regułowymi i kontekstowymi podpowiedziami (`hints`).
 - **Normalizacja formatów** (`definitions/formats.yaml`):
   - Daty konwertowane do standardu ISO `YYYY-MM-DD` (obsługa miesięcy słownie w języku polskim, np. â€ž15 marca 2026 r.â€ť).
-  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` â†’ `1200.5`).
+  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` => `1200.5`).
   - Identyfikatory: NIP (usunięcie kresek/prefiksu PL), KRS (dopełnienie do 10 cyfr), BZP, TED.
   - Imiona i nazwiska: lematyzacja mianownika z wykorzystaniem słownika morfologicznego `morfeusz2` (np. â€žJana Kowalskiegoâ€ť â†’ â€žJan Kowalskiâ€ť).
 - **Pola wyliczane i powiązania** (`definitions/derivations.yaml`):
@@ -88,9 +88,9 @@ flowchart TD
 
 ## Wymagania systemowe
 
-- **Python**: wersja **3.13+** (rekomendowana; system działa także na 3.10â€“3.15).
+- **Python**: wersja **3.13+** (rekomendowana; system działa także na 3.10-3.15).
 - **System operacyjny**: Windows 10/11, Linux (Ubuntu/Debian/Fedora) lub macOS.
-- **Pamięć RAM**: minimum 4 GB (rekomendowane 8â€“16 GB dla dużych wielostronicowych skanów OCR).
+- **Pamięć RAM**: minimum 4 GB (rekomendowane ~16 GB dla dużych wielostronicowych skanów OCR).
 - **Sprzęt**: procesor x86_64 / ARM64, **brak konieczności posiadania karty GPU**.
 - **Dostęp do sieci**: wymagany wyłącznie podczas pierwszego pobierania pakietów przez `pip`. Całe działanie aplikacji odbywa się **offline / on-premise**.
 
@@ -196,10 +196,10 @@ python main.py input output -v --report-dir reports
 ```
 
 Dostępne parametry `main.py`:
-- `input` â€“ ścieżka do katalogu wejściowego (domyślnie `./input`).
-- `output` â€“ ścieżka do katalogu wyjściowego (domyślnie `./output`).
-- `--report-dir KATALOG` â€“ zapisuje szczegółowe raporty diagnostyczne i atrybucji dla każdego pliku (`<plik>.report.json`).
-- `-v`, `--verbose` â€“ włącza szczegółowe logowanie każdego kroku przetwarzania (OCR, klasyfikacja, dopasowanie reguł).
+- `input` - ścieżka do katalogu wejściowego (domyślnie `./input`).
+- `output` - ścieżka do katalogu wyjściowego (domyślnie `./output`).
+- `--report-dir KATALOG` - zapisuje szczegółowe raporty diagnostyczne i atrybucji dla każdego pliku (`<plik>.report.json`).
+- `-v`, `--verbose` - włącza szczegółowe logowanie każdego kroku przetwarzania (OCR, klasyfikacja, dopasowanie reguł).
 - `-j N`, `--jobs N` – liczba równoległych procesów (domyślnie połowa rdzeni logicznych, maks. 4; `-j 1` = sekwencyjnie). Wyniki są zapisywane w kolejności plików wejściowych, więc są identyczne jak przy pracy sekwencyjnej.
 
 Zmienna środowiskowa `ODW_DOCLING=1` włącza analizę struktury PDF-ów cyfrowych przez Docling (tabele, Markdown). Domyślnie jest wyłączona: potok korzysta wyłącznie z tekstu warstwy tekstowej (pypdfium2), który jest identyczny w obu trybach, a Docling kosztuje 2–30 s na plik.
