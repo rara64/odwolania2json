@@ -37,6 +37,12 @@ fi
 echo "[1/4] Wykryto interpreter bazowy:"
 "$PYTHON" --version
 
+if ! "$PYTHON" -c "import venv, ensurepip" >/dev/null 2>&1; then
+    echo "[BŁĄD] Wybrany Python nie ma modułu venv/ensurepip." >&2
+    echo "Na Debian/Ubuntu zainstaluj: sudo apt install python3-venv" >&2
+    exit 1
+fi
+
 # 2. Tworzenie venv
 VENV_DIR=".venv"
 if [ -f "$VENV_DIR/bin/python" ]; then

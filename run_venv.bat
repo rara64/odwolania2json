@@ -23,17 +23,17 @@ set "ACTIVATE_BAT=%VENV_DIR%\Scripts\activate.bat"
 set "PYTHON_EXE=%VENV_DIR%\Scripts\python.exe"
 
 if not exist "%PYTHON_EXE%" (
-    echo.
-    echo =====================================================================
-    echo  [BLAD] Srodowisko .venv nie zostalo jeszcze utworzone!
-    echo =====================================================================
-    echo  Nie znaleziono pliku: %PYTHON_EXE%
-    echo  Aby skonfigurowac srodowisko na pierwsze uzycie, uruchom:
-    echo.
-    echo      setup_venv.bat
-    echo.
-    echo =====================================================================
-    echo.
+    echo Nie znaleziono .venv. Uruchamiam automatyczny setup...
+    call "%~dp0setup_venv.bat" --no-pause
+    if errorlevel 1 (
+        echo [BLAD] Nie udalo sie utworzyc srodowiska .venv.
+        if "%~1"=="" pause
+        exit /b 1
+    )
+)
+
+if not exist "%PYTHON_EXE%" (
+    echo [BLAD] Po setupie nie znaleziono: %PYTHON_EXE%
     if "%~1"=="" pause
     exit /b 1
 )

@@ -20,17 +20,12 @@ ACTIVATE_SCRIPT="$VENV_DIR/bin/activate"
 PYTHON_BIN="$VENV_DIR/bin/python"
 
 if [ ! -f "$PYTHON_BIN" ]; then
-    echo "" >&2
-    echo "=====================================================================" >&2
-    echo " [BŁĄD] Środowisko .venv nie zostało jeszcze utworzone!" >&2
-    echo "=====================================================================" >&2
-    echo " Nie znaleziono: $PYTHON_BIN" >&2
-    echo " Aby skonfigurować środowisko na pierwsze użycie, uruchom:" >&2
-    echo "" >&2
-    echo "     ./setup_venv.sh" >&2
-    echo "" >&2
-    echo "=====================================================================" >&2
-    echo "" >&2
+    echo "Nie znaleziono .venv. Uruchamiam automatyczny setup..."
+    "$DIR/setup_venv.sh"
+fi
+
+if [ ! -f "$PYTHON_BIN" ]; then
+    echo "[BŁĄD] Po setupie nie znaleziono: $PYTHON_BIN" >&2
     exit 1
 fi
 
