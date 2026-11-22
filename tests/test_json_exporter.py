@@ -112,9 +112,9 @@ def test_export_tree_mirrors_input_structure(tmp_path, exporter):
     (src / "dok.pdf").write_bytes((DATA / "przyklad_01" / "pelnomocnictwo.pdf").read_bytes())
     (src / "inny.pdf").write_bytes((DATA / "negatywne" / "KIO_KIO 2617-21.pdf").read_bytes())
     written = exporter.export_tree(tmp_path / "input", tmp_path / "output", tmp_path / "reports")
-    assert sorted(p.relative_to(tmp_path / "output").as_posix() for p in written) == ["sprawa1/dok.json", "sprawa1/inny.json"]
+    assert sorted(p.relative_to(tmp_path / "output").as_posix() for p in written) == ["sprawa1/inny.json", "sprawa1/pelnomocnictwo.json"]  # klasa → nazwa z documents.yaml; negatywny → nazwa wejściowa
     assert json.loads((tmp_path / "output" / "sprawa1" / "inny.json").read_text(encoding="utf-8")) == {}
-    pel = json.loads((tmp_path / "output" / "sprawa1" / "dok.json").read_text(encoding="utf-8"))
+    pel = json.loads((tmp_path / "output" / "sprawa1" / "pelnomocnictwo.json").read_text(encoding="utf-8"))
     assert list(pel) == ["mocodawca", "pelnomocnicy"]
-    report = json.loads((tmp_path / "reports" / "sprawa1" / "dok.report.json").read_text(encoding="utf-8"))
+    report = json.loads((tmp_path / "reports" / "sprawa1" / "pelnomocnictwo.report.json").read_text(encoding="utf-8"))
     assert report["document_class"] == "pelnomocnictwo"

@@ -97,7 +97,8 @@ documents:
                   nullable: true
                   description: Nazwa kancelarii pełnomocnika
                   hints: ['Kancelaria']
-                  capture: '(Kancelari[^\n,]*(?:\n[a-ząćęłńóśźż][^\n,]*)?)'
+                  # zawinięta nazwa: kontynuacja z małej litery w następnej linii (Docling wstawia między nie pustą linię)
+                  capture: '(Kancelari[^\n,]*(?:\n(?:[ \t]*\n)?[ \t]*[a-ząćęłńóśźż][^\n,]*)?)'
                 mail:
                   type: email
                   nullable: true

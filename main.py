@@ -82,7 +82,8 @@ def process_file(exporter, pdf: Path, out_path: Path, report_path: Path | None) 
         logger.exception("Błąd przetwarzania %s", pdf.name)
         report.add("", f"Błąd przetwarzania: {exc}", "error")
 
-    # 4. zapis (zawsze – błąd/negatywny daje pusty JSON)
+    # 4. zapis (zawsze – błąd/negatywny daje pusty JSON); nazwa pliku wg klasy dokumentu
+    out_path = exporter.output_path(out_path, label)
     exporter_mod._write_json(out_path, data)
     if report_path is not None:
         exporter_mod._write_json(report_path, {"file": pdf.name, **report.to_dict()})

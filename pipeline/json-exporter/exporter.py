@@ -817,6 +817,12 @@ class JsonExporter:
 
     # zapis
 
+    def output_path(self, out_path: str | Path, label: str | None) -> Path:
+        """Nazwa pliku wynikowego wg klasy (documents.yaml: output_file); dokument negatywny zachowuje nazwę wejściową."""
+        out_path = Path(out_path)
+        name = (self.defs.documents.get(label) or {}).get("output_file") if label else None
+        return out_path.with_name(name) if name else out_path
+
     def export_pdf(self, pdf_path: str | Path, out_path: str | Path, report_dir: str | Path | None = None) -> Path:
         pdf_path, out_path = Path(pdf_path), Path(out_path)
         try:
@@ -825,6 +831,7 @@ class JsonExporter:
             logger.exception("Nie udało się przetworzyć %s", pdf_path)
             label, data, report = None, copy.deepcopy(self.defs.negative_output), Report(source="error")
             report.add("", f"Błąd przetwarzania: {exc}", "error")
+        out_path = self.output_path(out_path, label)
         _write_json(out_path, data)
         if report_dir is not None:
             _write_json(Path(report_dir) / f"{out_path.stem}.report.json", {"file": pdf_path.name, **report.to_dict()})

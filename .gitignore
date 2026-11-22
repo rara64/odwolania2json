@@ -11,3 +11,6 @@ __pycache__/
 dev/dane/skany/*
 .venv/*
 output/*
+input/*
+/input
+/output
