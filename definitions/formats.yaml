@@ -41,6 +41,41 @@ formats:
     json_type: integer
     values: [0, 1]
 
+  flag_lider:
+    json_type: integer
+    values: [0, 1]
+    capture: '((?i:Lider|prowadzący\s+postępowanie|Partner))'
+    normalize:
+      - match_rules:
+          strategy: earliest
+          rules:
+            - {value: 1, pattern: '(?i)lider|prowadzący\s+postępowanie'}
+            - {value: 0, pattern: '(?i)partner'}
+
+  czynnosc_id:
+    json_type: integer
+    values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    # Okno tekstu od frazy wprowadzającej do pierwszego zarzutu. Obsługuje oba szablony:
+    #   "wnoszę o: Zamawiający … unieważnił …"
+    #   "wnoszę odwołanie … polegających na: 1) unieważnieniu …"
+    capture: '(?:wnosz[ęe]\s+o\s*:|polegając\w*\s+na\s*:)([\s\S]{0,700})'
+    normalize:
+      - match_rules:
+          strategy: earliest
+          rules:
+            - {value: 10, pattern: 'zaniecha\w*\s+unieważnien'}
+            - {value: 9,  pattern: 'unieważni'}
+            - {value: 7,  pattern: 'zaniecha\w*\s+odrzucen|nie\s+odrzuci'}
+            - {value: 8,  pattern: 'zaniecha\w*\s+wykluczen|nie\s+wyklucz'}
+            - {value: 1,  pattern: 'odrzucen\w*\s+ofert'}
+            - {value: 2,  pattern: '(?:wyb[oó]r\w*|wybra\w*)(?:\s+\w+){0,3}\s+ofert|udzieleni\w*\s+zamówienia'}
+            - {value: 3,  pattern: 'wykluczen'}
+            - {value: 5,  pattern: '(?:zmodyfikowa\w*|modyfikacj\w*|zmian\w*)\s+(?:treś\w*\s+)?(?:swz|specyfikacj)'}
+            - {value: 4,  pattern: '(?:ustaleni\w*|opublikowa\w*|udostępni\w*)\s+(?:treś\w*\s+)?(?:swz|specyfikacj)'}
+            - {value: 6,  pattern: '(?:odpowiedzi\s+(?:na\s+pytania|i\s+wyjaśnien)|udzieleni\w*\s+odpowiedzi)'}
+            - {value: 11, pattern: 'opis\w*\s+przedmiotu\s+zamówienia|udost[ęe]pni\w*\s+(?:opis|opz)'}
+            - {value: 12, pattern: 'projektowan\w*\s+postanowie\w*\s+umowy|projekt\w*\s+umowy|wz[oó]r\w*\s+umowy|określeni\w*\s+wzoru\s+umowy'}
+
   amount:
     json_type: number
     capture: '(\d[\d \u00a0]*(?:[.,]\d{1,2})?)\s*(?:zł|PLN)?'

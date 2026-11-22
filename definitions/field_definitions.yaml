@@ -37,18 +37,20 @@ documents:
             type: date
             nullable: true
             description: Data sporządzenia odwołania (nagłówek pisma, obok miejscowości)
-            hints: ['<miejscowość>, dnia', 'dnia']
+            hints: []
+            # Tylko nagłówek "Miejscowość, [dnia] data" – bez łapania dat ustaw/ogloszeń w treści.
+            capture: '^[ \t]*[A-ZĄĆĘŁŃÓŚŹŻ][^\n]{0,80}?,[ \t]+(?:dnia[ \t]+)?(\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}|\d{1,2}\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)\s+\d{4})'
           czynnosc_dzien:
             type: date
             description: Data dokonania zaskarżonej czynności zamawiającego (lub powzięcia o niej wiadomości)
             hints: ['w dniu', 'czynności z dnia', 'informacja z dnia', 'opublikowano']
           czynnosc_powod_id:
-            type: integer
+            type: czynnosc_id
             description: >-
               Rodzaj zaskarżonej czynności – id z lookups.yaml (czynnosc_powod);
               ustalany na podstawie PIERWSZEGO zarzutu odwołania
             values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-            hints: ['Zarzut nr 1', 'Zarzuty', 'odwołanie wnoszę od']
+            hints: []
           czynnosc_opis:
             type: enum
             description: Opis zaskarżonej czynności – zawsze zgodny z czynnosc_powod_id
@@ -106,6 +108,8 @@ documents:
         min_items: 1
         description: Zamawiający; przy zamówieniu wspólnym – każdy zamawiający osobno
         hints: ['Zamawiający:']
+        # zamówienie wspólne: '1) Zamawiający – Lider: … 2) Zamawiający – Partner: …'
+        split_numbered: true
         items:
           type: object
           fields:
@@ -122,7 +126,7 @@ documents:
               type: regon
               hints: ['REGON']
             prowadzacy_postepowanie:
-              type: flag
+              type: flag_lider
               nullable: true
               description: >-
                 Tylko przy kilku zamawiających: 1 – zamawiający prowadzący postępowanie
@@ -189,6 +193,7 @@ documents:
               min_items: 1
               description: Osoby podpisujące pełnomocnictwo w imieniu mocodawcy
               hints: ['podpis', 'Prezes Zarządu', 'Członek Zarządu', 'wspólnik']
+              stops: ['Pełnomocnictwo przyjmuję', 'W imieniu']
               items:
                 type: object
                 fields:
@@ -200,6 +205,7 @@ documents:
         min_items: 1
         description: Osoby umocowane (pełnomocnicy)
         hints: ['udzielam pełnomocnictwa', 'ustanawiam pełnomocnikiem', 'Pełnomocnicy', 'adw.', 'r.pr.']
+        stops: ['Pełnomocnictwo przyjmuję', 'W imieniu', 'Mocodawca:', 'Z poważaniem']
         items:
           type: object
           fields:

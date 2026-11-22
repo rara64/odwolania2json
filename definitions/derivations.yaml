@@ -23,9 +23,9 @@ documents:
       present: pelnomocnik.imie_nazwisko
 
     Zamawiajacy[].prowadzacy_postepowanie:
-      override: true
       when:
         - {if: 'count(../) == 1', then: null}   # jeden zamawiający → null
+        - {if: 'count(../) > 1 and prowadzacy_postepowanie == null', then: 0}
 
   pelnomocnictwo:
     mocodawca[].data.typ:

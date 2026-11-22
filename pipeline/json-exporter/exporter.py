@@ -270,6 +270,70 @@ def _left_pad(text: str, arg: dict) -> str:
     return text.rjust(int(arg["width"]), str(arg.get("char", " "))) if text else text
 
 
+def _match_rules(text: str, arg: Any = None) -> str:
+    """Uniwersalna klasyfikacja/mapowanie tekstu na podstawie reguł regex z YAML.
+
+    Obsługiwany format parametru `arg`:
+      - słownik z konfiguracją:
+          rules: [{value: ..., pattern: ...}, ...]
+          strategy: 'earliest' (domyślnie: najwcześniejsze dopasowanie w tekście) | 'first' (kolejność reguł)
+          case_insensitive: bool (domyślnie: True)
+      - lista reguł (shorthand):
+          [{value: 1, pattern: '...'}, ...] lub [[1, '...'], ...]
+    """
+    if not text:
+        return ""
+
+    if isinstance(arg, dict):
+        rules_def = arg.get("rules", [])
+        strategy = arg.get("strategy", "earliest")
+        case_insensitive = arg.get("case_insensitive", True)
+    elif isinstance(arg, list):
+        rules_def = arg
+        strategy = "earliest"
+        case_insensitive = True
+    else:
+        rules_def = []
+        strategy = "earliest"
+        case_insensitive = True
+
+    rules: list[tuple[str, str]] = []
+    for item in rules_def:
+        if isinstance(item, dict):
+            val = str(item.get("value", item.get("id", "")))
+            pat = str(item.get("pattern", item.get("match", "")))
+        elif isinstance(item, (list, tuple)) and len(item) == 2:
+            val, pat = str(item[0]), str(item[1])
+        else:
+            continue
+        if pat:
+            rules.append((val, pat))
+
+    stripped = text.strip()
+    if any(stripped == r[0] for r in rules):
+        return stripped
+
+    clean = re.sub(r"\s+", " ", text)
+    flags = re.IGNORECASE if case_insensitive else 0
+
+    if strategy == "first":
+        for val, pat in rules:
+            if re.search(pat, clean, flags):
+                return val
+        return ""
+    else:
+        # 'earliest' - najwcześniejsze wystąpienie w oknie tekstu (np. pierwszy zarzut)
+        matches: list[tuple[int, str]] = []
+        for val, pat in rules:
+            m = re.search(pat, clean, flags)
+            if m:
+                matches.append((m.start(), val))
+        if not matches:
+            return ""
+        matches.sort(key=lambda x: x[0])
+        return matches[0][1]
+
+
 NORMALIZERS: dict[str, Callable[[str, Any], str]] = {
     "strip": lambda s, _: s.strip(),
     "collapse_whitespace": lambda s, _: re.sub(r"\s+", " ", s).strip(),
@@ -284,6 +348,10 @@ NORMALIZERS: dict[str, Callable[[str, Any], str]] = {
     "remove_titles": lambda s, _: re.sub(r"\s+", " ", _TITLES_RE.sub(" ", s)).strip(" ,;"),
     "nominative_person_name": _nominative_person_name,
     "date_to_iso": _date_to_iso,
+    "match_rules": _match_rules,
+    "earliest_match": _match_rules,
+    "czynnosc_id": _match_rules,
+    "lider_flag": _match_rules,
     "left_pad": _left_pad,
     "regex_replace": _regex_replace,
 }
@@ -343,13 +411,18 @@ def _canonical(value: Any) -> str:
 _UPPER = "A-ZĄĆĘŁŃÓŚŹŻ"
 _LOWER = "a-ząćęłńóśźż"
 _TITLE_LINE_RE = re.compile(rf"[{_UPPER}][{_UPPER}\s]{{4,}}")
+_HEADING_RE = re.compile(r"^(?:§\s*\d+[.)]?|\d+[.)])\s*")
+_LABEL_WORDS_RE = re.compile(r"^(?:Zamawiający|Mocodawca|Partner|Lider|Wykonawca|Odwołujący)\b", re.IGNORECASE)
 _QUOTES = {"„": "”", "\"": "\"", "“": "”", "«": "»"}
 
 
 def _hint_re(hint: str, anchored: bool = False) -> re.Pattern:
     """Etykieta z `hints` → tolerancyjny regex (wielkość liter, odstępy, końcówki fleksyjne)."""
+    hint = hint.strip()
+    if hint.endswith(":"):
+        hint = hint[:-1].rstrip()
     parts: list[str] = []
-    tokens = [t for t in re.split(r"(\s+|<[^>]+>)", hint.strip()) if t]
+    tokens = [t for t in re.split(r"(\s+|<[^>]+>)", hint) if t]
     for i, token in enumerate(tokens):
         if token.isspace():
             parts.append(r"\s+")
@@ -371,16 +444,72 @@ def _hint_re(hint: str, anchored: bool = False) -> re.Pattern:
 
 
 def _label_re(hint: str) -> re.Pattern:
-    """Etykieta sekcji: fraza na początku linii, po niej ':' albo koniec linii."""
+    """Etykieta sekcji: fraza na początku linii, po niej ':' / '(' albo koniec linii.
+
+    Bez myślnika – 'Zamawiający – X – prowadzi postępowanie…' to proza/podpis, nie nagłówek sekcji.
+    """
     regex = _hint_re(hint, anchored=True)
-    return regex if hint.rstrip().endswith(":") else re.compile(regex.pattern + r"[ \t]*(?::|$)", regex.flags)
+    return re.compile(regex.pattern + r"[ \t]*(?::|$|\()", regex.flags)
 
 
 def _clean_head(text: str) -> str | None:
     """Pierwsza linia sekcji → kandydat na nazwę: bez adresu/dopisków i początkowych słów pisanych małą literą."""
-    text = re.split(r",\s|\s\(", text.strip(" :\t"), maxsplit=1)[0]
+    text = _HEADING_RE.sub("", text.strip(" :\t"), count=1)
+    text = re.sub(r"^(?:Mocodawc[aąęy]\s+(?:jest|są)\s+|Mocodawca\s+|Zamawiający\s+|Wykonawca\s+|Odwołujący\s+)", "", text, flags=re.IGNORECASE)
+    text = re.split(r",\s|\s\(", text, maxsplit=1)[0]
     text = re.sub(rf"^(?:[{_LOWER}]+\s+)+", "", text).strip()
     return text if re.match(rf"[{_UPPER}]", text) else None
+
+
+def _segment_head(text: str) -> str | None:
+    """Nagłówek sekcji → nazwa podmiotu; pomija etykiety typu 'Zamawiający – Lider:' i numery listy."""
+    lines = text.split("\n")
+    first = _clean_head(lines[0]) if lines else None
+    if first and not _LABEL_WORDS_RE.match(first):
+        return first
+    for line in lines[1:]:
+        line = line.strip()
+        if not line or _TITLE_LINE_RE.fullmatch(line):
+            continue
+        candidate = _clean_head(_HEADING_RE.sub("", line, count=1))
+        if candidate and not _LABEL_WORDS_RE.match(candidate):
+            return candidate
+    return None
+
+
+_ID_LABEL_RE = re.compile(r"\b(?:KRS|NIP|REGON)\b[ \t]*[:\d]")
+
+
+def _split_numbered(text: str) -> list[str]:
+    """Rozbija listę '1) … 2) …' na elementy (tylko numeracja z nawiasem).
+
+    Listy podmiotów mają w każdym elemencie identyfikator (KRS/NIP/REGON); numerowane
+    zarzuty/prozy (np. „1) zaniechaniu … wykonawcy X sp. z o.o. …”) – nie, więc ich nie rozbijamy.
+    """
+    lines = text.split("\n")
+    starts = [i for i, line in enumerate(lines) if re.match(r"^\s*\d+\)\s*\S", line)]
+    if len(starts) < 2:
+        return [text]
+    parts = ["\n".join(lines[start:end]) for start, end in zip(starts, starts[1:] + [len(lines)])]
+    return parts if all(_ID_LABEL_RE.search(part) for part in parts) else [text]
+
+
+def _first_content_hint(hints: list[str], text: str) -> re.Match | None:
+    """Pierwsze wystąpienie etykiety, które nie stoi w linii-nagłówku ('§ 1. Mocodawca', '1) …')."""
+    for hint in hints:
+        for match in _hint_re(hint).finditer(text):
+            line_start = text.rfind("\n", 0, match.start()) + 1
+            line_end = text.find("\n", match.end())
+            line = text[line_start: line_end if line_end != -1 else None].strip()
+            if not _HEADING_RE.match(line):
+                return match
+    return None
+
+
+def _is_signature_block(lines: list[str], i: int) -> bool:
+    """Etykieta, po której od razu stoją kropki podpisu, to blok podpisów, nie sekcja danych."""
+    following = next((line.strip() for line in lines[i + 1:] if line.strip()), "")
+    return bool(re.fullmatch(r"[.\s]+", following))
 
 
 def _all_hints(node: dict) -> set[str]:
@@ -439,9 +568,10 @@ class RuleFiller:
         for name, child in children.items():
             siblings = [h for other, c in children.items() if other != name and _is_container(c) for h in c.get("hints", [])]
             if child.get("type") == "object" and child.get("hints"):
+                segmentations = self._segmentations(child, scope, siblings, self.OBJECT_WINDOW) or [[(scope, None)]]
                 candidates = [
                     self._object(child, sub_scope, [sub_head], focused=True)
-                    for sub_scope, sub_head in (segs[0] for segs in self._segmentations(child, scope, siblings, self.OBJECT_WINDOW))
+                    for sub_scope, sub_head in (segs[0] for segs in segmentations)
                 ]
                 result[name] = max(candidates, key=_filled)  # przy remisie pierwszy kandydat
             else:
@@ -449,8 +579,24 @@ class RuleFiller:
         return result
 
     def _array(self, node: dict, scope: str, siblings: list[str]) -> list:
-        candidates = [self._items(node["items"], segs) for segs in self._segmentations(node, scope, siblings, self.ARRAY_WINDOW)]
+        segmentations = self._segmentations(node, scope, siblings, self.ARRAY_WINDOW)
+        if not segmentations:
+            return []
+        if node.get("split_numbered"):
+            segmentations = [self._expand_numbered(segs) for segs in segmentations]
+        candidates = [self._items(node["items"], segs) for segs in segmentations]
         return max(candidates, key=_filled)
+
+    def _expand_numbered(self, segments: list[tuple[str, str | None]]) -> list[tuple[str, str | None]]:
+        """Sekcje zawierające numerowaną listę podmiotów (opt-in: `split_numbered`) → element na pozycję."""
+        expanded: list[tuple[str, str | None]] = []
+        for seg, seg_head in segments:
+            parts = _split_numbered(seg)
+            if len(parts) > 1:
+                expanded.extend((part, _segment_head(part)) for part in parts)
+            else:
+                expanded.append((seg, seg_head))
+        return expanded
 
     def _items(self, item: dict, segments: list[tuple[str, str | None]]) -> list:
         name_field = self._person_key(item)
@@ -488,17 +634,20 @@ class RuleFiller:
         """Możliwe podziały tekstu na fragmenty [(tekst, pierwsza linia)] dla obiektu/tablicy.
 
         Kandydaci: sekcje od etykiety (np. 'Zamawiający:') i okno kilku linii wokół frazy z `hints`
-        (szukanej też w całym dokumencie, gdy brak jej we fragmencie); bez nich – cały fragment.
-        Wywołujący wybiera kandydata, który wypełnia najwięcej pól.
+        (szukanej też w całym dokumencie, gdy brak jej we fragmencie); bez nich – brak kandydatów
+        (wywołujący decyduje o fallbacku). Wywołujący wybiera kandydata, który wypełnia najwięcej pól.
         """
         hints = node.get("hints", [])
         lines = scope.split("\n")
         candidates: list[list] = []
 
         anchored = [_label_re(h) for h in hints]
-        starts = [i for i, line in enumerate(lines) if any(r.match(line) for r in anchored)]
+        starts = [
+            i for i, line in enumerate(lines)
+            if any(r.match(line) for r in anchored) and not _is_signature_block(lines, i)
+        ]
         if starts:
-            stops = [_label_re(h) for h in siblings]
+            stops = [_label_re(h) for h in siblings] + [_label_re(h) for h in node.get("stops", [])]
             segments = []
             for i in starts:
                 end = next(
@@ -506,24 +655,25 @@ class RuleFiller:
                      if j in starts or any(r.match(lines[j]) for r in stops) or _TITLE_LINE_RE.fullmatch(lines[j].strip())),
                     len(lines),
                 )
-                label = next(m for r in anchored if (m := r.match(lines[i])))
-                rest = lines[i][label.end():].strip(" :\t")
-                head = rest or (lines[i + 1].strip() if i + 1 < end else "")
-                segments.append(("\n".join(lines[i:end]), _clean_head(head)))
+                segment = "\n".join(lines[i:end])
+                segments.append((segment, _segment_head(segment)))
             candidates.append(segments)
 
         for text in (scope, self.document) if scope is not self.document else (scope,):
-            match = next((m for h in hints if (m := _hint_re(h).search(text))), None)
+            match = _first_content_hint(hints, text)
             if match:
                 i = text.count("\n", 0, match.start())
                 text_lines = text.split("\n")
                 lo, hi = max(0, i + window[0]), i + window[1] + text.count("\n", match.start(), match.end())
+                segment = "\n".join(text_lines[lo:hi])
+                # nazwa liczona od trafienia, nie od początku okna (okno może obejmować tytuł pisma);
+                # bez zgadywania z dalszych linii – w oknie wpada proza ('NIP …', '… w postępowaniu …')
                 line_end = text.find("\n", match.end())
-                head = _clean_head(text[match.end():line_end if line_end != -1 else None])
-                candidates.append([("\n".join(text_lines[lo:hi]), head)])
+                head = _clean_head(text[match.end(): line_end if line_end != -1 else None])
+                candidates.append([(segment, head)])
                 break
 
-        return candidates or [[(scope, None)]]
+        return candidates
 
     # pola-liście
 
