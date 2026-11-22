@@ -8,7 +8,6 @@
 !*.code-workspace
 .wymagania/*
 __pycache__/
-dev/dane/skany/*
 .venv/
 .venv/*
 venv/
