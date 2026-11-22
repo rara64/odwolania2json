@@ -238,8 +238,9 @@ def _date_to_iso(text: str, _arg: Any = None) -> str:
     candidates = []
     if m := re.search(r"(\d{4})-(\d{1,2})-(\d{1,2})", text):
         candidates.append((m.group(1), m.group(2), m.group(3)))
-    if m := re.search(r"(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})", text):
-        candidates.append((m.group(3), m.group(2), m.group(1)))
+    if m := re.search(r"(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})|(\d{2}) (\d{2}) (\d{4})", text):
+        day, month, year = (m.group(1), m.group(2), m.group(3)) if m.group(1) else (m.group(4), m.group(5), m.group(6))
+        candidates.append((year, month, day))
     if m := re.search(r"(\d{1,2})\s+([^\W\d_]+)\.?\s+(\d{4})", text):
         month = next((n for stem, n in _MONTHS.items() if m.group(2).lower().startswith(stem)), None)
         if month:
@@ -452,25 +453,46 @@ def _label_re(hint: str) -> re.Pattern:
 def _clean_head(text: str) -> str | None:
     """Pierwsza linia sekcji → kandydat na nazwę: bez adresu/dopisków i początkowych słów pisanych małą literą."""
     text = _HEADING_RE.sub("", text.strip(" :\t"), count=1)
-    text = re.sub(r"^(?:Mocodawc[aąęy]\s+(?:jest|są)\s+|Mocodawca\s+|Zamawiający\s+|Wykonawca\s+|Odwołujący\s+)", "", text, flags=re.IGNORECASE)
-    text = re.split(r",\s|\s\(", text, maxsplit=1)[0]
+    text = re.sub(r"^(?:Mocodawc[aąęy]\s+(?:jest|są)\s+|(?:Mocodawca|Zamawiający|Wykonawca|Odwołujący)(?:\s*:)?\s+)", "", text, flags=re.IGNORECASE)
+    text = re.split(r",\s|\s\(|\s+z\s+siedzibą\b", text, maxsplit=1)[0]
     text = re.sub(rf"^(?:[{_LOWER}]+\s+)+", "", text).strip()
+    if re.match(r"Konsorcj|Wykonawc[yó]\w*\s+wspóln", text, re.IGNORECASE):
+        return None  # 'Odwołujący: Konsorcjum wykonawców …' – nazwy członków są w kolejnych liniach
     return text if re.match(rf"[{_UPPER}]", text) else None
+
+
+_FIRM_OF_RE = re.compile(r"\bprowadząc\w*\s+działalnoś\w*\s+gospodarcz\w*\s+pod\s+(?:firmą|nazwą)\s*:?\s*", re.IGNORECASE)
+_WRAP_TAIL_RE = re.compile(r"\s(?:w|we|i|z|ze|na|pod|im\.|imienia|ds\.)$")
+
+
+def _with_continuation(candidate: str, lines: list[str], i: int) -> str:
+    """Nazwa urwana na końcu linii ('… Straży Pożarnej w' / 'Jarzębinie') – dołącza kolejną linię."""
+    nxt = lines[i + 1].strip() if i + 1 < len(lines) else ""
+    if (_WRAP_TAIL_RE.search(candidate) and re.match(rf"[{_UPPER}][{_LOWER}]", nxt)
+            and not re.search(r"[\d:@]", nxt) and len(nxt) <= 60):
+        return f"{candidate} {nxt.split(',')[0].strip()}"
+    return candidate
 
 
 def _segment_head(text: str) -> str | None:
     """Nagłówek sekcji → nazwa podmiotu; pomija etykiety typu 'Zamawiający – Lider:' i numery listy."""
     lines = text.split("\n")
+    if lines and (m := _FIRM_OF_RE.search(lines[0])):
+        # przedsiębiorca: 'Jan Kowalski prowadzący działalność gospodarczą pod firmą' / 'Jan Kowalski Firma X'
+        rest = lines[0][m.end():].strip()
+        firm = rest or (lines[1].strip() if len(lines) > 1 else "")
+        if firm:
+            return re.split(r",\s|\s\(", firm, maxsplit=1)[0].strip()
     first = _clean_head(lines[0]) if lines else None
     if first and not _LABEL_WORDS_RE.match(first):
-        return first
-    for line in lines[1:]:
+        return _with_continuation(first, lines, 0)
+    for i, line in enumerate(lines[1:], 1):
         line = line.strip()
         if not line or _TITLE_LINE_RE.fullmatch(line):
             continue
         candidate = _clean_head(_HEADING_RE.sub("", line, count=1))
         if candidate and not _LABEL_WORDS_RE.match(candidate):
-            return candidate
+            return _with_continuation(candidate, lines, i)
     return None
 
 
@@ -590,7 +612,8 @@ class RuleFiller:
         for name, child in children.items():
             siblings = [h for other, c in children.items() if other != name and _is_container(c) for h in c.get("hints", [])]
             if child.get("type") == "object" and child.get("hints"):
-                segmentations = self._segmentations(child, scope, siblings, self.OBJECT_WINDOW) or [[(scope, None)]]
+                window = tuple(child.get("window", self.OBJECT_WINDOW))
+                segmentations = self._segmentations(child, scope, siblings, window) or [[(scope, None)]]
                 candidates = [
                     self._object(child, sub_scope, [sub_head], focused=True)
                     for sub_scope, sub_head in (segs[0] for segs in segmentations)
@@ -614,6 +637,9 @@ class RuleFiller:
             if not node.get("whole_scope_fallback"):
                 return []
             segmentations = [[(scope, None)]]  # brak etykiet – jeden element z całego fragmentu
+        elif node.get("whole_scope_fallback") and node.get("split_numbered") and len(_split_numbered(scope)[0]) > 1:
+            # lista podmiotów dłuższa niż okno wokół etykiety ('Konsorcjum: 1) X … 2) Y …' w kilku liniach)
+            segmentations.append([(scope, None)])
         if node.get("split_numbered"):
             segmentations = [self._expand_numbered(segs) for segs in segmentations]
         candidates = [self._items(node["items"], segs) for segs in segmentations]
@@ -754,7 +780,10 @@ class RuleFiller:
     # pola-liście
 
     def _capture(self, node: dict) -> str | None:
-        return node.get("capture") or self.defs.format_of(node).get("capture")
+        capture = node.get("capture") or self.defs.format_of(node).get("capture")
+        if capture and node.get("capture_also"):  # dodatkowy wariant pola obok wzorca formatu
+            return f"(?:{capture})|(?:{node['capture_also']})"
+        return capture
 
     def _leaf(self, node: dict, scope: str, head: list, focused: bool = False) -> Any:
         capture = self._capture(node)
@@ -806,7 +835,7 @@ class RuleFiller:
         line_end = scope.find("\n", hint.end())
         line_end = len(scope) if line_end == -1 else line_end
         rest = re.sub(r"^[^\w„\"“«]*", "", scope[hint.end():line_end])
-        if tail := re.match(r"^[^\d:„\"“«]{0,25}:\s*", rest):  # 'PRZELEWU:' w 'TYTUŁ PRZELEWU:'
+        if tail := re.match(r"^[^\d:„\"“«,.]{0,25}:\s*", rest):  # 'PRZELEWU:' w 'TYTUŁ PRZELEWU:' (nie 'WPIS OD ODW., ZAM:')
             rest = rest[tail.end():]
         elif not scope[line_start:hint.start()].strip() and re.fullmatch(r"[^\W\d]+(\s+[^\W\d]+)?\.?\s*", rest):
             rest = ""  # cała linia to etykieta, np. 'Tytuł przelewu' – wartość w następnej linii
@@ -827,13 +856,26 @@ class RuleFiller:
                 text += " " + line
             return " ".join(text.split(closing)[0].split()) or None
 
+        # cytat bez cudzysłowu otwierającego (OCR gubi dolny '„'): 'pn. Odbiór … zamieszkałych", nr …'
+        # – wartość do cudzysłowu zamykającego w tej lub 1–2 kolejnych liniach
+        window = " ".join([rest] + following[:2])
+        if (m := re.search(r"[\w.)]\s*([”\"])(?=\s*[,.;]|\s+(?:nr|numer|znak)\b)", window)) \
+                and not re.search(r"[„“«\"]", window[:m.start(1)]):
+            return " ".join(window[:m.start(1)].split()) or None
+
         parts = [rest]
         # zawinięta linia: poprzednia urywa się na słowie (albo kontynuacja to jeden token, np. numer
         # transakcji 'CEN2610289710500' dopisany na końcu tytułu przelewu), a ta nie jest etykietą
         for line in following:
             wrapped = re.search(r"[^\W\d],?$", parts[-1]) or re.fullmatch(r"[^\s:]+", line)
+            # tekst wersalikami ('… DLA' / 'RADCA PRAWNY … W' / 'POSTĘPOWANIU …') ciągnie się dalej wersalikami;
+            # linia z małymi literami po nim to już kolejne pole ('Typ transakcji …', 'Dokument jest wydrukiem …')
+            all_caps = not re.search(rf"[{_LOWER}]", parts[-1]) and re.search(rf"[{_UPPER}]{{2}}", parts[-1])
+            caps_tail = all_caps or re.search(rf"(?<!\S)(?:[{_UPPER}]+[,.]?\s+)+[{_UPPER}]+[,.]?$", parts[-1])
+            if (all_caps and re.search(rf"[{_LOWER}]", line)) or (caps_tail and re.match(rf"[{_UPPER}][{_LOWER}]", line)):
+                break
             if (not wrapped or not line or "...." in line or re.match(r"[^:]{0,30}:", line)
-                    or _TITLE_LINE_RE.fullmatch(line) or any(r.match(line) for r in self.labels)):
+                    or (_TITLE_LINE_RE.fullmatch(line) and not caps_tail) or any(r.match(line) for r in self.labels)):
                 break
             parts.append(line)
         return " ".join(" ".join(parts).split()) or None

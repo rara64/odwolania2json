@@ -29,7 +29,8 @@ formats:
 
   date:
     json_type: string
-    capture: '(\d{4}-\d{2}-\d{2}|\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}|\d{1,2}\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)\s+\d{4})'
+    # '20 04 2026' – kropki zgubione przez OCR
+    capture: '(\d{4}-\d{2}-\d{2}|\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}|\d{2} \d{2} \d{4}\b|\d{1,2}\s+(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)\s+\d{4})'
     description: Data ISO 8601 (RRRR-MM-DD)
     normalize: [strip, date_to_iso]   # akceptuje m.in. 21.03.2026, 21-03-2026, 21 marca 2026 r.
     pattern: '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$'
@@ -58,7 +59,8 @@ formats:
     # Okno tekstu od frazy wprowadzającej do pierwszego zarzutu. Obsługuje oba szablony:
     #   "wnoszę o: Zamawiający … unieważnił …"
     #   "wnoszę odwołanie … polegających na: 1) unieważnieniu …"
-    capture: '(?:wnosz[ęe]\s+o\s*:|polegając\w*\s+na\s*:)([\s\S]{0,700})'
+    #   "wnoszę odwołanie wobec: 1. czynności … / treści SWZ …" (przed późniejszym "Wobec powyższego wnoszę o:")
+    capture: '(?:wnosz[ęe]\s+odwo[łl]anie\s+wobec\s*:|wnosz[ęe]\s+o\s*:|polegając\w*\s+na\s*:)([\s\S]{0,700})'
     normalize:
       - match_rules:
           strategy: earliest
@@ -71,8 +73,8 @@ formats:
             - {value: 2,  pattern: '(?:wyb[oó]r\w*|wybra\w*)(?:\s+\w+){0,3}\s+ofert|udzieleni\w*\s+zamówienia'}
             - {value: 3,  pattern: 'wykluczen'}
             - {value: 5,  pattern: '(?:zmodyfikowa\w*|modyfikacj\w*|zmian\w*)\s+(?:treś\w*\s+)?(?:swz|specyfikacj)'}
-            - {value: 4,  pattern: '(?:ustaleni\w*|opublikowa\w*|udostępni\w*)\s+(?:treś\w*\s+)?(?:swz|specyfikacj)'}
-            - {value: 6,  pattern: '(?:odpowiedzi\s+(?:na\s+pytania|i\s+wyjaśnien)|udzieleni\w*\s+odpowiedzi)'}
+            - {value: 4,  pattern: '(?:ustaleni\w*|opublikowa\w*|udostępni\w*)\s+(?:treś\w*\s+)?(?:swz|specyfikacj)|^\W*\d*\W*treś\w*\s+(?:swz|specyfikacj)'}
+            - {value: 6,  pattern: '(?:odpowiedzi\s+(?:na\s+pytania|i\s+wyjaśnien)|udzieleni\w*\s+odpowiedzi|wyjaśnie\w*\s*(?:do\s+)?swz)'}
             - {value: 11, pattern: 'opis\w*\s+przedmiotu\s+zamówienia|udost[ęe]pni\w*\s+(?:opis|opz)'}
             - {value: 12, pattern: 'projektowan\w*\s+postanowie\w*\s+umowy|projekt\w*\s+umowy|wz[oó]r\w*\s+umowy|określeni\w*\s+wzoru\s+umowy'}
 

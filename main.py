@@ -6,7 +6,7 @@ i zapisuje wynikowe JSON-y do `output/` w tej samej strukturze drzewa:
     input/<sprawa>/<plik>.pdf  →  output/<sprawa>/<plik>.json
 
 Kroki dla każdego pliku:
-    1. data_extraction      – tekst PDF (Docling + RapidOCR, awaryjnie pypdfium2)
+    1. data_extraction      – tekst PDF (warstwa tekstowa; skany: OCR linii RapidOCR z prostowaniem i korektą)
     2. document-classifier  – klasa dokumentu: odwolanie / pelnomocnictwo / przelew / None
     3. json-exporter        – wartości pól, normalizacja, pola wyliczane wg `definitions/`
     4. zapis                – JSON do `output/` (dokument negatywny lub błąd → `{}`)

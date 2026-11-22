@@ -22,6 +22,15 @@ documents:
     Odwolujacy[].przez-pelnomocnika:
       present: pelnomocnik.imie_nazwisko
 
+    # odwołujący działający samodzielnie: e-mail/nazwa z jego własnej sekcji to nie dane pełnomocnika
+    Odwolujacy[].pelnomocnik.mail:
+      when:
+        - {if: 'imie_nazwisko == null and nazwa == null', then: null}
+
+    Odwolujacy[].pelnomocnik.nazwa:
+      when:
+        - {if: 'imie_nazwisko == null', then: null}
+
     Zamawiajacy[].prowadzacy_postepowanie:
       when:
         - {if: 'count(../) == 1', then: null}   # jeden zamawiający → null
