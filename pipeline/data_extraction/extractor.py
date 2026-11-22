@@ -22,7 +22,7 @@ import logging
 import re
 import time
 import unicodedata
-from contextlib import closing, nullcontext
+from contextlib import closing
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -55,12 +55,12 @@ class PageLayout:
     scanned: list[int]
 
 
-def resolve_ocr_backend() -> str:
-    """RapidOCR na onnxruntime, jeśli jest zainstalowany; w przeciwnym razie na torch."""
+def resolve_ocr_backend() -> str | None:
+    """Wybiera dostępny backend OCR. Obsługiwane jest wyłącznie ONNX Runtime."""
     try:
         import onnxruntime  # type: ignore # noqa: F401
     except ImportError:
-        return "torch"
+        return None
     return "onnxruntime"
 
 
@@ -115,8 +115,7 @@ class PdfExtractor:
             return result
 
         try:
-            with _inference_mode():
-                result = self._extract_with_docling(path, (1, last_page) if max_pages else None, layout, last_page)
+            result = self._extract_with_docling(path, (1, last_page) if max_pages else None, layout, last_page)
             ocr_applied = False
             status, extra = "success", {}
         except Exception as exc:
@@ -316,8 +315,12 @@ class PdfExtractor:
         if self._ocr_engine is None:
             from rapidocr import EngineType, RapidOCR  # type: ignore
 
-            engine = EngineType.TORCH if self.backend == "torch" else EngineType.ONNXRUNTIME
-            self._ocr_engine = RapidOCR(params={f"{stage}.engine_type": engine for stage in ("Det", "Cls", "Rec")})
+            if self.backend != "onnxruntime":
+                raise RuntimeError("Brak backendu OCR – zainstaluj onnxruntime.")
+            self._ocr_engine = RapidOCR(params={
+                f"{stage}.engine_type": EngineType.ONNXRUNTIME
+                for stage in ("Det", "Cls", "Rec")
+            })
         return self._ocr_engine
 
 
@@ -536,11 +539,3 @@ def _docling_preview(doc, full_markdown: str) -> str:
     except TypeError:  # starszy Docling bez parametru page_no
         return full_markdown
     return "\n\n".join(parts)
-
-
-def _inference_mode():
-    try:
-        import torch
-    except ImportError:
-        return nullcontext()
-    return torch.inference_mode()

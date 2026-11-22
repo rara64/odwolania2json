@@ -9,11 +9,8 @@ numpy>=1.24.0
 # Definitions & classifier rules (YAML)
 PyYAML>=6.0
 
-# PyTorch – CPU-only build (target: laptop without GPU).
-# On Linux plain PyPI ships CUDA wheels (~GBs); this index serves the "+cpu" builds.
-# Windows/macOS PyPI wheels are already CPU-only, so the index changes nothing there.
---extra-index-url https://download.pytorch.org/whl/cpu
-torch>=2.0.0
+# OCR backend
+onnxruntime>=1.17.0
 
 
 # Models & Validation
