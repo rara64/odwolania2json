@@ -13,38 +13,21 @@ if "%PORT%"=="" set PORT=8765
 
 cd /d "%~dp0"
 
-REM 1. Sprawdź lokalne środowisko wirtualne (.venv lub venv)
-set "PYTHON="
-if exist "%~dp0.venv\Scripts\python.exe" (
-    set "PYTHON=%~dp0.venv\Scripts\python.exe"
-) else if exist "%~dp0venv\Scripts\python.exe" (
-    set "PYTHON=%~dp0venv\Scripts\python.exe"
-)
+set "PYTHON=%~dp0.venv\Scripts\python.exe"
 
-REM 2. Jeśli brak venv, znajdź działający interpreter python w PATH
-if not defined PYTHON (
-    python -c "import sys" >nul 2>&1
-    if not errorlevel 1 (
-        set "PYTHON=python"
-    ) else (
-        py -3.13 -c "import sys" >nul 2>&1
-        if not errorlevel 1 (
-            set "PYTHON=py -3.13"
-        ) else (
-            py -3 -c "import sys" >nul 2>&1
-            if not errorlevel 1 (
-                set "PYTHON=py -3"
-            ) else (
-                py -c "import sys" >nul 2>&1
-                if not errorlevel 1 set "PYTHON=py"
-            )
-        )
+REM 1. Jeśli brak .venv, utwórz je automatycznie przez setup.
+if not exist "%PYTHON%" (
+    echo Nie znaleziono .venv. Uruchamiam automatyczny setup...
+    call "%~dp0setup_venv.bat" --no-pause
+    if errorlevel 1 (
+        echo BŁĄD: Nie udało się utworzyć środowiska .venv.
+        pause
+        exit /b 1
     )
 )
 
-if not defined PYTHON (
-    echo BŁĄD: Nie znaleziono interpretera Python ani wirtualnego środowiska .venv!
-    echo Aby skonfigurować środowisko, uruchom najpierw: setup_venv.bat
+if not exist "%PYTHON%" (
+    echo BŁĄD: Po setupie nie znaleziono interpretera .venv: %PYTHON%
     pause
     exit /b 1
 )

@@ -55,7 +55,15 @@ echo [1/4] Uzywany interpreter Python bazowy:
 %PYTHON% --version
 if errorlevel 1 (
     echo [BLAD] Nie udalo sie uruchomic wybranego Pythona.
-    pause
+    if not "%1"=="--no-pause" pause
+    exit /b 1
+)
+
+%PYTHON% -c "import venv, ensurepip" >nul 2>&1
+if errorlevel 1 (
+    echo [BLAD] Wybrany Python nie ma modulu venv/ensurepip.
+    echo Zainstaluj pelna wersje Pythona wraz z modulami venv i ensurepip.
+    if not "%1"=="--no-pause" pause
     exit /b 1
 )
 

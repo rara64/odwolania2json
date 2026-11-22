@@ -9,21 +9,16 @@ PORT="${1:-8765}"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DIR" || exit 1
 
-# 1. Sprawdź lokalne środowisko wirtualne (.venv lub venv)
-PYTHON=""
-if [ -f "$DIR/.venv/bin/python" ]; then
-    PYTHON="$DIR/.venv/bin/python"
-elif [ -f "$DIR/venv/bin/python" ]; then
-    PYTHON="$DIR/venv/bin/python"
-elif command -v python3 >/dev/null 2>&1; then
-    PYTHON=python3
-elif command -v python >/dev/null 2>&1; then
-    PYTHON=python
+PYTHON="$DIR/.venv/bin/python"
+
+# 1. Jeśli brak .venv, utwórz je automatycznie przez setup.
+if [ ! -f "$PYTHON" ]; then
+    echo "Nie znaleziono .venv. Uruchamiam automatyczny setup..."
+    "$DIR/setup_venv.sh"
 fi
 
-if [ -z "$PYTHON" ]; then
-    echo "BŁĄD: Nie znaleziono Pythona w PATH ani środowiska .venv." >&2
-    echo "Aby skonfigurować środowisko, uruchom najpierw: ./setup_venv.sh" >&2
+if [ ! -f "$PYTHON" ]; then
+    echo "BŁĄD: Po setupie nie znaleziono interpretera .venv: $PYTHON" >&2
     exit 1
 fi
 

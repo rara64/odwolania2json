@@ -105,7 +105,7 @@ flowchart TD
 
 ## Instalacja i pierwsze uruchomienie (Setup)
 
-Dla maksymalnej wygody przygotowano automatyczne skrypty tworzące dedykowane, izolowane środowisko wirtualne `.venv` i instalujące w nim wymagane zależności.
+Dla maksymalnej wygody przygotowano automatyczne skrypty tworzące dedykowane, izolowane środowisko wirtualne `.venv` i instalujące w nim wymagane zależności. Wszystkie skrypty `start`, `start_gui` i `run_venv` najpierw wykrywają istniejące `.venv`; jeśli go nie ma, automatycznie uruchamiają `setup_venv` i dopiero potem wykonują polecenie.
 
 ### Automatyczny setup (Zalecane)
 
@@ -171,7 +171,7 @@ pip install -r requirements-dev.txt
 
 ### Przetwarzanie wsadowe CLI
 
-Podstawowy tryb pracy aplikacji do masowego przetwarzania dokumentów PDF. Skrypty startowe **automatycznie wykrywają i używają utworzonego środowiska `.venv`**!
+Podstawowy tryb pracy aplikacji do masowego przetwarzania dokumentów PDF. Skrypty startowe **automatycznie wykrywają i używają `.venv`**; jeśli środowisko nie istnieje, skrypt utworzy je przez `setup_venv` przed uruchomieniem programu.
 
 1. Umieść pliki PDF w katalogu `input/` (możesz organizować je w podfoldery, np. `input/sprawa_01/odwolanie.pdf`).
 2. Uruchom przetwarzanie:
@@ -237,7 +237,7 @@ start_gui.bat 9000
 
 ### Narzędzia pomocnicze venv
 
-Do repozytorium dołączono skrypty pozwalające na wygodne wywoływanie dowolnych poleceń wewnątrz środowiska `.venv`:
+Do repozytorium dołączono skrypty pozwalające na wygodne wywoływanie dowolnych poleceń wewnątrz środowiska `.venv`. Przy braku `.venv` skrypty tworzą go automatycznie przez setup:
 
 **Uruchomienie interaktywnej konsoli z aktywnym venv:**
 - Windows: `run_venv.bat`
@@ -389,7 +389,7 @@ W procesach administracji publicznej kluczowa jest weryfikowalność podjętych 
 O: Biblioteka `morfeusz2` posiada gotowe koła binarne (wheels) dla większości popularnych wersji Pythona na platformach Windows i Linux x86_64. W przypadku problemów upewnij się, że używasz 64-bitowego Pythona.
 
 **P: Na systemie Linux skrypt `setup_venv.sh` nie chce się uruchomić.**
-O: Upewnij się, że plik ma uprawnienia do wykonywania: `chmod +x *.sh`. Upewnij się także, że w systemie zainstalowano pakiet venv dla Twojej wersji Pythona (np. `sudo apt install python3-venv`).
+O: Nadaj uprawnienia do wykonywania: `chmod +x *.sh`. Skrypt sprawdza moduły `venv` i `ensurepip` i na Debian/Ubuntu może wymagać: `sudo apt install python3-venv`. Po instalacji uruchom ponownie dowolny skrypt startowy lub `./setup_venv.sh`.
 
 **P: Wyjście w konsoli Windows wyświetla zniekształcone polskie znaki.**
 O: Wszystkie skrypty `.bat` automatycznie ustawiają stronę kodową UTF-8 (`chcp 65001`). Upewnij się, że Twój terminal (np. Windows Terminal lub CMD) używa czcionki obsługującej polskie znaki diakrytyczne (np. Cascadia Code, Consolas).
