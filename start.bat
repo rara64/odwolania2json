@@ -1,24 +1,48 @@
 @echo off
+chcp 65001 >nul
 setlocal
 
-REM ── Uruchamianie CLI odwolania2json ─────────────────────────────────────────
+REM -------------------------------------------------------------------------
+REM  Uruchamianie CLI odwolania2json
+REM -------------------------------------------------------------------------
 REM Bierze PDF-y z folderu input\ (rekurencyjnie), przetwarza je i zapisuje
 REM wynikowe JSON-y do output\ w tej samej strukturze katalogów.
 REM Użycie: start.bat [-v] [--report-dir KATALOG]
 
-chcp 65001 >nul
 cd /d "%~dp0"
 
-REM Spróbuj python, a następnie launcher py
+REM 1. Sprawdź lokalne środowisko wirtualne (.venv lub venv)
 set "PYTHON="
-where python >nul 2>&1
-if not errorlevel 1 set "PYTHON=python"
-if not defined PYTHON (
-    where py >nul 2>&1
-    if not errorlevel 1 set "PYTHON=py"
+if exist "%~dp0.venv\Scripts\python.exe" (
+    set "PYTHON=%~dp0.venv\Scripts\python.exe"
+) else if exist "%~dp0venv\Scripts\python.exe" (
+    set "PYTHON=%~dp0venv\Scripts\python.exe"
 )
+
+REM 2. Jeśli brak venv, znajdź działający interpreter python w PATH
 if not defined PYTHON (
-    echo BŁĄD: Nie znaleziono Pythona w PATH. Zainstaluj Pythona 3.13+.
+    python -c "import sys" >nul 2>&1
+    if not errorlevel 1 (
+        set "PYTHON=python"
+    ) else (
+        py -3.13 -c "import sys" >nul 2>&1
+        if not errorlevel 1 (
+            set "PYTHON=py -3.13"
+        ) else (
+            py -3 -c "import sys" >nul 2>&1
+            if not errorlevel 1 (
+                set "PYTHON=py -3"
+            ) else (
+                py -c "import sys" >nul 2>&1
+                if not errorlevel 1 set "PYTHON=py"
+            )
+        )
+    )
+)
+
+if not defined PYTHON (
+    echo BŁĄD: Nie znaleziono interpretera Python ani wirtualnego środowiska .venv!
+    echo Aby skonfigurować środowisko, uruchom najpierw: setup_venv.bat
     pause
     exit /b 1
 )
@@ -35,7 +59,7 @@ echo  Wyjście : %CD%\output
 echo.
 
 set "PYTHONUTF8=1"
-%PYTHON% main.py input output %*
+"%PYTHON%" main.py input output %*
 set "EXIT_CODE=%ERRORLEVEL%"
 
 echo.

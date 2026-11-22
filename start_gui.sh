@@ -6,15 +6,24 @@
 
 PORT="${1:-8765}"
 
-cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$DIR" || exit 1
 
-# Spróbuj python3, a następnie python
-if command -v python3 >/dev/null 2>&1; then
+# 1. Sprawdź lokalne środowisko wirtualne (.venv lub venv)
+PYTHON=""
+if [ -f "$DIR/.venv/bin/python" ]; then
+    PYTHON="$DIR/.venv/bin/python"
+elif [ -f "$DIR/venv/bin/python" ]; then
+    PYTHON="$DIR/venv/bin/python"
+elif command -v python3 >/dev/null 2>&1; then
     PYTHON=python3
 elif command -v python >/dev/null 2>&1; then
     PYTHON=python
-else
-    echo "BŁĄD: Nie znaleziono Pythona w PATH. Zainstaluj Pythona 3.9+." >&2
+fi
+
+if [ -z "$PYTHON" ]; then
+    echo "BŁĄD: Nie znaleziono Pythona w PATH ani środowiska .venv." >&2
+    echo "Aby skonfigurować środowisko, uruchom najpierw: ./setup_venv.sh" >&2
     exit 1
 fi
 
