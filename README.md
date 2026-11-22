@@ -6,6 +6,13 @@ Projekt realizuje automatyczną transformację wielodokumentowych spraw administ
 
 Rozwiązanie działa w **100% lokalnie (on-premise)**, nie wymaga karty graficznej (GPU) ani zewnętrznych płatnych usług chmurowych, zapewniając pełne bezpieczeństwo danych i zgodność z wymaganiami technicznymi konkursu.
 
+## TL;DR
+
+- **Przeznaczenie:** automatyczna ekstrakcja danych odwołań, pełnomocnictw i przelewów do JSON.
+- **Działanie:** lokalny potok PDF → tekst/OCR → klasyfikacja → ekstrakcja pól → walidacja i zapis.
+- **Jakość:** na zbiorze `dev/dane` klasyfikacja **180/180**, Micro F1 **1.000**, Macro doc-level F1 **1.000** i dokładny JSON **180/180**.
+- **Uruchomienie:** `start.bat` w Windows lub `./start.sh` na Linux/macOS.
+
 ---
 
 ## Spis treści
@@ -73,22 +80,22 @@ flowchart TD
 - Na podstawie `definitions/field_definitions.yaml` lokalizowane są odpowiednie sekcje dokumentu (np. Odwołujący, Zamawiający, Pełnomocnik, Przedmiot zamówienia).
 - Wartości są dopasowywane wzorcami regułowymi i kontekstowymi podpowiedziami (`hints`).
 - **Normalizacja formatów** (`definitions/formats.yaml`):
-  - Daty konwertowane do standardu ISO `YYYY-MM-DD` (obsługa miesięcy słownie w języku polskim, np. â€ž15 marca 2026 r.â€ť).
-  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` => `1200.5`).
+  - Daty konwertowane do standardu ISO `YYYY-MM-DD` (obsługa miesięcy słownie w języku polskim, np. „15 marca 2026 r.”).
+  - Kwoty walutowe przeliczane na liczby zmiennoprzecinkowe `float` (np. `1 200,50 zł` → `1200.5`).
   - Identyfikatory: NIP (usunięcie kresek/prefiksu PL), KRS (dopełnienie do 10 cyfr), BZP, TED.
-  - Imiona i nazwiska: lematyzacja mianownika z wykorzystaniem słownika morfologicznego `morfeusz2` (np. â€žJana Kowalskiegoâ€ť â†’ â€žJan Kowalskiâ€ť).
+  - Imiona i nazwiska: lematyzacja mianownika z wykorzystaniem słownika morfologicznego `morfeusz2` (np. „Jana Kowalskiego” → „Jan Kowalski”).
 - **Pola wyliczane i powiązania** (`definitions/derivations.yaml`):
   - Uzupełnianie wartości domyślnych, relacji i sum na podstawie innych pól dokumentu.
 
 ### 4. Zapis wyniku do `output/`
-- Wynikowy plik JSON jest zapisywany w identycznej ścieżce poddrzewa w katalogu `output/` (np. `input/case1/skan.pdf` â†’ `output/case1/skan.json`).
+- Wynikowy plik JSON jest zapisywany w identycznej ścieżce poddrzewa w katalogu `output/` (np. `input/case1/skan.pdf` → `output/case1/skan.json`).
 - W przypadku dokumentu niesklasyfikowanego (negatywnego) lub błędu, tworzony jest poprawny pusty obiekt JSON (`{}`), zgodnie ze specyfikacją wyzwania.
 
 ---
 
 ## Wymagania systemowe
 
-- **Python**: wersja **3.13+** (rekomendowana; system działa także na 3.10-3.15).
+- **Python**: rekomendowana wersja **3.13+**; obecny Windowsowy `.venv` działa na Pythonie 3.15.
 - **System operacyjny**: Windows 10/11, Linux (Ubuntu/Debian/Fedora) lub macOS.
 - **Pamięć RAM**: minimum 4 GB (rekomendowane ~16 GB dla dużych wielostronicowych skanów OCR).
 - **Sprzęt**: procesor x86_64 / ARM64, **brak konieczności posiadania karty GPU**.
@@ -98,7 +105,7 @@ flowchart TD
 
 ## Instalacja i pierwsze uruchomienie (Setup)
 
-Dla maksymalnej wygody przygotowano automatyczne skrypty tworzące dedykowane, izolowane środowisko wirtualne `.venv` i instalujące w nim wymagane zależności.
+Repozytorium zawiera skrypty tworzące dedykowane środowisko wirtualne `.venv` i instalujące wymagane zależności. Skrypty `start`, `start_gui` i `run_venv` sprawdzają `.venv` i uruchamiają setup, jeśli środowisko nie istnieje.
 
 ### Automatyczny setup (Zalecane)
 
@@ -124,7 +131,7 @@ chmod +x *.sh
 ```
 
 **Co wykonuje skrypt instalacyjny?**
-1. Wykrywa optymalny interpreter Pythona (wspiera `py -3.13`, `py -3`, `python3`, `python`).
+1. Wykrywa dostępny interpreter Pythona (`py -3.13`, `py -3`, `python3` lub `python`).
 2. Tworzy środowisko wirtualne w katalogu `.venv/`.
 3. Aktualizuje menedżer pakietów `pip`.
 4. Instaluje pakiety z pliku `requirements.txt` (m.in. `docling`, `rapidocr`, `morfeusz2`, `pydantic`, `pyyaml`, `pandas`, `pypdfium2`).
@@ -164,7 +171,7 @@ pip install -r requirements-dev.txt
 
 ### Przetwarzanie wsadowe CLI
 
-Podstawowy tryb pracy aplikacji do masowego przetwarzania dokumentów PDF. Skrypty startowe **automatycznie wykrywają i używają utworzonego środowiska `.venv`**!
+Podstawowy tryb pracy aplikacji do masowego przetwarzania dokumentów PDF. Skrypty startowe wykrywają `.venv`; jeśli go brak, uruchamiają setup Windows lub Linux przed startem programu.
 
 1. Umieść pliki PDF w katalogu `input/` (możesz organizować je w podfoldery, np. `input/sprawa_01/odwolanie.pdf`).
 2. Uruchom przetwarzanie:
@@ -233,7 +240,7 @@ start_gui.bat 9000
 
 ### Narzędzia pomocnicze venv
 
-Do repozytorium dołączono skrypty pozwalające na wygodne wywoływanie dowolnych poleceń wewnątrz środowiska `.venv`:
+Do repozytorium dołączono skrypty pozwalające na wygodne wywoływanie poleceń wewnątrz środowiska `.venv`. Przy braku `.venv` skrypty próbują uruchomić odpowiedni setup przed wykonaniem polecenia:
 
 **Uruchomienie interaktywnej konsoli z aktywnym venv:**
 - Windows: `run_venv.bat`
@@ -256,39 +263,39 @@ run_venv.bat pytest
 
 ```text
 odwolania2json/
-â”śâ”€â”€ definitions/                     # Deklaratywne reguły biznesowe w YAML
-â”‚   â”śâ”€â”€ documents.yaml               # Rejestr obsługiwanych klas dokumentów i plików wyjściowych
-â”‚   â”śâ”€â”€ field_definitions.yaml       # Definicje pól JSON, sekcji, etykiet i wzorców regex
-â”‚   â”śâ”€â”€ formats.yaml                 # Formaty wartości (daty, NIP, PESEL, kwoty, normalizacja)
-â”‚   â”śâ”€â”€ lookups.yaml                 # Słowniki wartości kanonicznych
-â”‚   â””â”€â”€ derivations.yaml             # Reguły pól wyliczanych i wartości domyślnych
-â”śâ”€â”€ dev/                             # Przykładowe dane testowe i treningowe
-â”‚   â””â”€â”€ dane/                        # Zbiór spraw (odwołania, pełnomocnictwa, skany, negatywne)
-â”śâ”€â”€ gui/                             # Interfejs graficzny użytkownika
-â”‚   â””â”€â”€ index.html                   # Aplikacja Single Page Application (HTML5/JS/CSS)
-â”śâ”€â”€ pipeline/                        # Moduły potoku przetwarzania
-â”‚   â”śâ”€â”€ data_extraction/             # Ekstrakcja tekstu z PDF (pypdfium2 / RapidOCR / deskewing)
-â”‚   â”śâ”€â”€ document-classifier/         # Klasyfikator dokumentów oraz rules.yaml
-â”‚   â””â”€â”€ json-exporter/               # Budowanie modelu JSON, conformer, ewaluacja reguł
-â”śâ”€â”€ tests/                           # Zestaw testów jednostkowych i ewaluacyjnych
-â”‚   â”śâ”€â”€ test_json_exporter.py        # Testy jednostkowe normalizacji i eksportera
-â”‚   â”śâ”€â”€ test_dev_f1score.py          # Ewaluacja F1-score na danych referencyjnych
-â”‚   â”śâ”€â”€ test_scans_f1score.py        # Ewaluacja jakości OCR na skanach
-â”‚   â””â”€â”€ compare.py                   # Narzędzie CLI do porównywania JSON z referencją
-â”śâ”€â”€ wymagania/                       # Specyfikacja zadania i dokumentacja UZP
-â”śâ”€â”€ gui_server.py                    # Lokalny serwer HTTP obsługujący Web GUI i REST API
-â”śâ”€â”€ main.py                          # Punkt wejścia aplikacji CLI (wsadowe przetwarzanie input/output)
-â”śâ”€â”€ requirements.txt                 # Wymagane biblioteki produkcyjne
-â”śâ”€â”€ requirements-dev.txt             # Biblioteki deweloperskie i testowe (pytest, scikit-learn)
-â”śâ”€â”€ setup_venv.bat                   # Skrypt instalacji środowiska .venv (Windows)
-â”śâ”€â”€ setup_venv.sh                    # Skrypt instalacji środowiska .venv (Linux/macOS)
-â”śâ”€â”€ run_venv.bat                     # Skrypt uruchamiania poleceń w .venv (Windows)
-â”śâ”€â”€ run_venv.sh                      # Skrypt uruchamiania poleceń w .venv (Linux/macOS)
-â”śâ”€â”€ start.bat                        # Uruchomienie przetwarzania wsadowego CLI (Windows)
-â”śâ”€â”€ start.sh                         # Uruchomienie przetwarzania wsadowego CLI (Linux/macOS)
-â”śâ”€â”€ start_gui.bat                    # Uruchomienie serwera Web GUI (Windows)
-â”śâ”€â”€ start_gui.sh                     # Uruchomienie serwera Web GUI (Linux/macOS)
-â””â”€â”€ README.md                        # Niniejsza dokumentacja
+├── definitions/                     # Deklaratywne reguły biznesowe w YAML
+│   ├── documents.yaml               # Rejestr obsługiwanych klas dokumentów i plików wyjściowych
+│   ├── field_definitions.yaml       # Definicje pól JSON, sekcji, etykiet i wzorców regex
+│   ├── formats.yaml                 # Formaty wartości (daty, NIP, PESEL, kwoty, normalizacja)
+│   ├── lookups.yaml                 # Słowniki wartości kanonicznych
+│   └── derivations.yaml             # Reguły pól wyliczanych i wartości domyślnych
+├── dev/                             # Przykładowe dane testowe i treningowe
+│   └── dane/                        # Zbiór spraw (odwołania, pełnomocnictwa, skany, negatywne)
+├── gui/                             # Interfejs graficzny użytkownika
+│   └── index.html                   # Aplikacja Single Page Application (HTML5/JS/CSS)
+├── pipeline/                        # Moduły potoku przetwarzania
+│   ├── data_extraction/             # Ekstrakcja tekstu z PDF (pypdfium2 / RapidOCR / deskewing)
+│   ├── document-classifier/         # Klasyfikator dokumentów oraz rules.yaml
+│   └── json-exporter/               # Budowanie modelu JSON, conformer, ewaluacja reguł
+├── tests/                           # Zestaw testów jednostkowych i ewaluacyjnych
+│   ├── test_json_exporter.py        # Testy jednostkowe normalizacji i eksportera
+│   ├── test_dev_f1score.py          # Ewaluacja F1-score na danych referencyjnych
+│   ├── test_scans_f1score.py        # Ewaluacja jakości OCR na skanach
+│   └── compare.py                   # Narzędzie CLI do porównywania JSON z referencją
+├── wymagania/                       # Specyfikacja zadania i dokumentacja UZP
+├── gui_server.py                    # Lokalny serwer HTTP obsługujący Web GUI i REST API
+├── main.py                          # Punkt wejścia aplikacji CLI (wsadowe przetwarzanie input/output)
+├── requirements.txt                 # Wymagane biblioteki produkcyjne
+├── requirements-dev.txt             # Biblioteki deweloperskie i testowe (pytest, scikit-learn)
+├── setup_venv.bat                   # Skrypt instalacji środowiska .venv (Windows)
+├── setup_venv.sh                    # Skrypt instalacji środowiska .venv (Linux/macOS)
+├── run_venv.bat                     # Skrypt uruchamiania poleceń w .venv (Windows)
+├── run_venv.sh                      # Skrypt uruchamiania poleceń w .venv (Linux/macOS)
+├── start.bat                        # Uruchomienie przetwarzania wsadowego CLI (Windows)
+├── start.sh                         # Uruchomienie przetwarzania wsadowego CLI (Linux/macOS)
+├── start_gui.bat                    # Uruchomienie serwera Web GUI (Windows)
+├── start_gui.sh                     # Uruchomienie serwera Web GUI (Linux/macOS)
+└── README.md                        # Niniejsza dokumentacja
 ```
 
 ---
@@ -332,7 +339,20 @@ System natychmiast zacznie rozpoznawać nowy dokument i generować dla niego zgo
 
 ## Testy i metryka jakości F1-Score
 
-Projekt zawiera automatyczne testy weryfikujące zgodność z danymi referencyjnymi przygotowanymi na bazie rzeczywistych spraw KIO:
+Projekt zawiera automatyczne testy weryfikujące zgodność z danymi referencyjnymi przygotowanymi na bazie rzeczywistych spraw KIO.
+
+### Wynik pełnej ewaluacji `dev/dane`
+
+| Metryka | Wynik |
+|---------|-------|
+| Klasyfikacja dokumentów | 180/180 (100%) |
+| Micro F1 | 1.000 |
+| Macro doc-level F1 | 1.000 |
+| Mediana doc-level F1 | 1.000 |
+| Dokładny JSON 1:1 | 180/180 (100%) |
+| Odwołanie | P 1.000 · R 1.000 · F1 1.000 |
+| Pełnomocnictwo | P 1.000 · R 1.000 · F1 1.000 |
+| Przelew | P 1.000 · R 1.000 · F1 1.000 |
 
 ```bash
 # Uruchomienie testów jednostkowych eksportera
@@ -372,7 +392,7 @@ W procesach administracji publicznej kluczowa jest weryfikowalność podjętych 
 O: Biblioteka `morfeusz2` posiada gotowe koła binarne (wheels) dla większości popularnych wersji Pythona na platformach Windows i Linux x86_64. W przypadku problemów upewnij się, że używasz 64-bitowego Pythona.
 
 **P: Na systemie Linux skrypt `setup_venv.sh` nie chce się uruchomić.**
-O: Upewnij się, że plik ma uprawnienia do wykonywania: `chmod +x *.sh`. Upewnij się także, że w systemie zainstalowano pakiet venv dla Twojej wersji Pythona (np. `sudo apt install python3-venv`).
+O: Upewnij się, że plik ma uprawnienia do wykonywania: `chmod +x *.sh`. Na Debian/Ubuntu może być wymagany pakiet `python3-venv`: `sudo apt install python3-venv`.
 
 **P: Wyjście w konsoli Windows wyświetla zniekształcone polskie znaki.**
 O: Wszystkie skrypty `.bat` automatycznie ustawiają stronę kodową UTF-8 (`chcp 65001`). Upewnij się, że Twój terminal (np. Windows Terminal lub CMD) używa czcionki obsługującej polskie znaki diakrytyczne (np. Cascadia Code, Consolas).
