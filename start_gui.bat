@@ -1,16 +1,16 @@
 @echo off
 setlocal
 
-REM ── odwolania2json GUI launcher ──────────────────────────────────────────────
-REM Starts the in-process HTTP GUI server and opens the browser.
-REM Usage: start_gui.bat [port]
+REM ── Uruchamianie GUI odwolania2json ─────────────────────────────────────────
+REM Uruchamia serwer HTTP GUI w bieżącym procesie i otwiera przeglądarkę.
+REM Użycie: start_gui.bat [port]
 
 set PORT=%1
 if "%PORT%"=="" set PORT=8765
 
 cd /d "%~dp0"
 
-REM Try python, then py launcher
+REM Spróbuj python, a następnie launcher py
 where python >nul 2>&1
 if %ERRORLEVEL%==0 (
     set PYTHON=python
@@ -19,7 +19,7 @@ if %ERRORLEVEL%==0 (
     if %ERRORLEVEL%==0 (
         set PYTHON=py
     ) else (
-        echo ERROR: Python not found on PATH. Please install Python 3.9+.
+        echo BŁĄD: Nie znaleziono Pythona w PATH. Zainstaluj Pythona 3.9+.
         pause
         exit /b 1
     )
@@ -28,11 +28,11 @@ if %ERRORLEVEL%==0 (
 echo.
 echo  odwolania2json GUI
 echo  ==================
-echo  Server : http://127.0.0.1:%PORT%
-echo  Ctrl+C  to stop.
+echo  Serwer : http://127.0.0.1:%PORT%
+echo  Ctrl+C, aby zatrzymać.
 echo.
 
-REM Open browser after a short delay (runs in background)
+REM Otwórz przeglądarkę po krótkim opóźnieniu (działa w tle)
 start "" /B cmd /c "timeout /t 2 >nul && start http://127.0.0.1:%PORT%"
 
 %PYTHON% gui_server.py --port %PORT%
