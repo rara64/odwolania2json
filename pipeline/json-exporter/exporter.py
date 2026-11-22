@@ -138,7 +138,7 @@ def _morfeusz_lemma(interpretation: tuple) -> str:
     return lemma.split(":", 1)[0]
 
 
-def _nominative_word(word: str) -> str:
+def _nominative_word(word: str, first_name: bool = True) -> str:
     morfeusz = _get_morfeusz()
     candidates = morfeusz.analyse(word)
     named = []
@@ -160,8 +160,8 @@ def _nominative_word(word: str) -> str:
         return word
 
     def is_nominative(data: tuple) -> bool:
-        tag = data[2]
-        return ":nom" in tag and ":sg:" in tag
+        parts = data[2].split(":")  # np. subst:sg:nom:m1, subst:sg.pl:nom.gen…:f
+        return len(parts) > 2 and "sg" in parts[1].split(".") and "nom" in parts[2].split(".")
 
     def is_pure_oblique(data: tuple) -> bool:
         tag = data[2]
@@ -174,19 +174,16 @@ def _nominative_word(word: str) -> str:
     ]
     nominative = [item for item in named if is_nominative(item[0])]
 
-    # Prefer an explicit nominative first name. It prevents names already in
-    # mianownik from being replaced because of a second, ambiguous interpretation.
-    for data, _lemma, _ in nominative:
-        if "imię" in data[3]:
-            strong_oblique = [
-                item for item in oblique
-                if "imię" in item[0][3]
-                and item[0][2].startswith("subst:")
-            ]
-            # In an ambiguous female nominative (e.g. Aleksandra), keep the
-            # nominative form instead of choosing a masculine oblique lemma.
-            if not strong_oblique or ":f" in data[2]:
-                return data[0]
+    # Słowo, które ma interpretację mianownika l.poj. jako imię/nazwisko, zostaje bez zmian.
+    # Druga, zależna interpretacja to zwykle dopełniacz l.mn. formy żeńskiej (Ryszard ← Ryszarda,
+    # Kamil ← Kamila, Dudek ← Dudka) albo forma męska (Aleksandra ← Aleksander) – wybór jej
+    # lematu psuł imiona i nazwiska już zapisane w mianowniku. Wyjątek: na pozycji imienia
+    # mianownik tylko jako nazwisko, a forma zależna jako imię ('Jana' → Jan) – wtedy odmieniamy
+    # (na pozycji nazwiska nie: 'Lis' to nie dopełniacz imienia 'Lisa').
+    if any("imię" in data[3] for data, _lemma, _ in nominative):
+        return word
+    if nominative and not (first_name and any("imię" in item[0][3] for item in oblique)):
+        return word
 
     if oblique:
         def oblique_rank(item: tuple) -> tuple:
@@ -230,11 +227,11 @@ def _nominative_person_name(text: str, _arg: Any = None) -> str:
     if not text:
         return text
 
-    def inflect_part(part: str) -> str:
+    def inflect_part(part: str, first_name: bool) -> str:
         pieces = part.split("-")
-        return "-".join(_nominative_word(piece) for piece in pieces)
+        return "-".join(_nominative_word(piece, first_name) for piece in pieces)
 
-    return " ".join(inflect_part(word) for word in text.split(" "))
+    return " ".join(inflect_part(word, i == 0) for i, word in enumerate(text.split(" ")))
 
 
 def _date_to_iso(text: str, _arg: Any = None) -> str:
@@ -411,7 +408,7 @@ def _canonical(value: Any) -> str:
 _UPPER = "A-ZĄĆĘŁŃÓŚŹŻ"
 _LOWER = "a-ząćęłńóśźż"
 _TITLE_LINE_RE = re.compile(rf"[{_UPPER}][{_UPPER}\s]{{4,}}")
-_HEADING_RE = re.compile(r"^(?:§\s*\d+[.)]?|\d+[.)])\s*")
+_HEADING_RE = re.compile(r"^(?:§\s*\d+[.)]?|\d{1,3}[.)])\s*")  # numer punktu; nie zawinięty NIP/REGON '9997550083), …'
 _LABEL_WORDS_RE = re.compile(r"^(?:Zamawiający|Mocodawca|Partner|Lider|Wykonawca|Odwołujący)\b", re.IGNORECASE)
 _QUOTES = {"„": "”", "\"": "\"", "“": "”", "«": "»"}
 
@@ -477,21 +474,46 @@ def _segment_head(text: str) -> str | None:
     return None
 
 
+_SIGNATURE_LINE_RE = re.compile(r"[ \t]*[.…_]{5,}[ \t]*")  # miejsce na podpis
+
+
 _ID_LABEL_RE = re.compile(r"\b(?:KRS|NIP|REGON)\b[ \t]*[:\d]")
 
 
-def _split_numbered(text: str) -> list[str]:
-    """Rozbija listę '1) … 2) …' na elementy (tylko numeracja z nawiasem).
+_INLINE_NUMBER_RE = re.compile(r"(?:^|(?<=[\s:;]))(\d{1,2})\)\s+(?=\S)", re.MULTILINE)  # '2)' bywa na końcu linii
 
+
+def _split_numbered(text: str) -> tuple[list[str], bool]:
+    """Rozbija listę '1) … 2) …' na elementy (tylko numeracja z nawiasem). Zwraca (części, czy_w_tekście).
+
+    Najpierw pozycje na początku linii; gdy ich brak – lista w akapicie
+    ('(Konsorcjum): 1) X sp. z o.o., …, KRS …; 2) Y sp.j., …'), wtedy numery muszą iść po kolei od 1.
     Listy podmiotów mają w każdym elemencie identyfikator (KRS/NIP/REGON); numerowane
     zarzuty/prozy (np. „1) zaniechaniu … wykonawcy X sp. z o.o. …”) – nie, więc ich nie rozbijamy.
     """
     lines = text.split("\n")
     starts = [i for i, line in enumerate(lines) if re.match(r"^\s*\d+\)\s*\S", line)]
-    if len(starts) < 2:
-        return [text]
-    parts = ["\n".join(lines[start:end]) for start, end in zip(starts, starts[1:] + [len(lines)])]
-    return parts if all(_ID_LABEL_RE.search(part) for part in parts) else [text]
+    if len(starts) >= 2:
+        parts = ["\n".join(lines[start:end]) for start, end in zip(starts, starts[1:] + [len(lines)])]
+        if all(_ID_LABEL_RE.search(part) for part in parts):
+            return parts, False
+
+    marks = []
+    for m in _INLINE_NUMBER_RE.finditer(text):
+        if int(m.group(1)) == len(marks) + 1:
+            marks.append(m.start())
+    if len(marks) >= 2:
+        parts = [text[a:b] for a, b in zip(marks, marks[1:] + [len(text)])]
+        if all(_ID_LABEL_RE.search(part) for part in parts):
+            return parts, True
+    return [text], False
+
+
+def _sentence_before(text: str, pos: int, limit: int = 400) -> str:
+    """Początek zdania, w którym stoi pozycja `pos` (do kropki/średnika ze spacją, maks. `limit` znaków)."""
+    window = text[max(0, pos - limit):pos]
+    ends = [m.end() for m in re.finditer(r"[.;!?]\s|\n\s*\n", window)]
+    return window[ends[-1]:] if ends else window
 
 
 def _first_content_hint(hints: list[str], text: str) -> re.Match | None:
@@ -574,26 +596,70 @@ class RuleFiller:
                     for sub_scope, sub_head in (segs[0] for segs in segmentations)
                 ]
                 result[name] = max(candidates, key=_filled)  # przy remisie pierwszy kandydat
+            elif child.get("type") == "array" and child.get("signature_owner"):
+                owner = _resolve(child["signature_owner"], [result])
+                result[name] = self._array(child, scope, siblings, owner if isinstance(owner, str) else None)
             else:
                 result[name] = self._node(child, scope, head, siblings, focused)
         return result
 
-    def _array(self, node: dict, scope: str, siblings: list[str]) -> list:
-        segmentations = self._segmentations(node, scope, siblings, self.ARRAY_WINDOW)
+    def _array(self, node: dict, scope: str, siblings: list[str], owner: str | None = None) -> list:
+        if node.get("signatures"):
+            blocks = self._signature_blocks(node, scope, owner) or self._signature_blocks(node, self.document, owner)
+            if blocks:
+                return self._items(node["items"], blocks)
+        window = tuple(node.get("window", self.ARRAY_WINDOW))
+        segmentations = self._segmentations(node, scope, siblings, window)
         if not segmentations:
-            return []
+            if not node.get("whole_scope_fallback"):
+                return []
+            segmentations = [[(scope, None)]]  # brak etykiet – jeden element z całego fragmentu
         if node.get("split_numbered"):
             segmentations = [self._expand_numbered(segs) for segs in segmentations]
         candidates = [self._items(node["items"], segs) for segs in segmentations]
         return max(candidates, key=_filled)
 
+    SIGNATURE_LINES = 3  # linie pod '.....' należące do podpisu (np. 'Za X sp. z o.o.', imię i nazwisko, funkcja)
+
+    def _signature_blocks(self, node: dict, text: str, owner: str | None = None) -> list[tuple[str, None]]:
+        """Bloki podpisów (opt-in: `signatures`): kilka linii pod każdą linią '.....'.
+
+        Etykieta ze `stops` (np. 'Pełnomocnictwo przyjmuję:') kończy listę – dalej są podpisy pełnomocników.
+        Nagłówki grup (`signature_groups`, np. 'W imieniu Torvex sp. z o.o.:') przypisują podpisy
+        podmiotom: przy znanym `owner` (wartość ze `signature_owner`) zostają tylko podpisy jego grupy.
+        """
+        lines = text.split("\n")
+        stops = [_label_re(h) for h in node.get("stops", [])]
+        group_res = [_hint_re(h, anchored=True) for h in node.get("signature_groups", [])]
+        stop = next((i for i, line in enumerate(lines) if any(r.match(line) for r in stops)), len(lines))
+        marks = [i for i, line in enumerate(lines[:stop]) if _SIGNATURE_LINE_RE.fullmatch(line)]
+
+        def norm(value: str) -> str:
+            return " ".join(value.split()).strip(" :").casefold()
+
+        group, group_at = None, {}
+        for i, line in enumerate(lines[:stop]):
+            if m := next((r.match(line) for r in group_res if r.match(line)), None):
+                group = norm(line[m.end():])
+            group_at[i] = group
+
+        blocks = []
+        for k, i in enumerate(marks):
+            end = min(marks[k + 1] if k + 1 < len(marks) else stop, i + 1 + self.SIGNATURE_LINES)
+            blocks.append(("\n".join(lines[i + 1:end]), group_at.get(i)))
+        if owner and any(g for _, g in blocks):
+            mine = [b for b in blocks if b[1] and (norm(owner) in b[1] or b[1] in norm(owner))]
+            blocks = mine or blocks
+        return [(block, None) for block, _ in blocks]
+
     def _expand_numbered(self, segments: list[tuple[str, str | None]]) -> list[tuple[str, str | None]]:
         """Sekcje zawierające numerowaną listę podmiotów (opt-in: `split_numbered`) → element na pozycję."""
         expanded: list[tuple[str, str | None]] = []
         for seg, seg_head in segments:
-            parts = _split_numbered(seg)
+            parts, inline = _split_numbered(seg)
             if len(parts) > 1:
-                expanded.extend((part, _segment_head(part)) for part in parts)
+                # w akapicie pierwsza linia pozycji to urwana nazwa ('1) Torvex') – nazwa z `capture`
+                expanded.extend((part, None if inline else _segment_head(part)) for part in parts)
             else:
                 expanded.append((seg, seg_head))
         return expanded
@@ -642,36 +708,46 @@ class RuleFiller:
         candidates: list[list] = []
 
         anchored = [_label_re(h) for h in hints]
+        # tytuł pisma ('PEŁNOMOCNICTWO') to nie etykieta sekcji, choć pasuje do tolerancyjnego 'Pełnomocnicy';
+        # linia wersalikami jest etykietą tylko przy dokładnej zgodności ('MOCODAWCA')
+        exact = {h.strip().rstrip(":").strip().casefold() for h in hints}
         starts = [
             i for i, line in enumerate(lines)
             if any(r.match(line) for r in anchored) and not _is_signature_block(lines, i)
+            and (not _TITLE_LINE_RE.fullmatch(line.strip()) or line.strip().rstrip(":").strip().casefold() in exact)
         ]
         if starts:
             stops = [_label_re(h) for h in siblings] + [_label_re(h) for h in node.get("stops", [])]
             segments = []
             for i in starts:
+                # sekcja kończy się na kolejnej etykiecie, tytule albo linii podpisu '.....'
                 end = next(
                     (j for j in range(i + 1, len(lines))
-                     if j in starts or any(r.match(lines[j]) for r in stops) or _TITLE_LINE_RE.fullmatch(lines[j].strip())),
+                     if j in starts or any(r.match(lines[j]) for r in stops)
+                     or _TITLE_LINE_RE.fullmatch(lines[j].strip()) or _SIGNATURE_LINE_RE.fullmatch(lines[j])),
                     len(lines),
                 )
                 segment = "\n".join(lines[i:end])
                 segments.append((segment, _segment_head(segment)))
             candidates.append(segments)
 
-        for text in (scope, self.document) if scope is not self.document else (scope,):
-            match = _first_content_hint(hints, text)
-            if match:
-                i = text.count("\n", 0, match.start())
-                text_lines = text.split("\n")
-                lo, hi = max(0, i + window[0]), i + window[1] + text.count("\n", match.start(), match.end())
-                segment = "\n".join(text_lines[lo:hi])
-                # nazwa liczona od trafienia, nie od początku okna (okno może obejmować tytuł pisma);
-                # bez zgadywania z dalszych linii – w oknie wpada proza ('NIP …', '… w postępowaniu …')
-                line_end = text.find("\n", match.end())
-                head = _clean_head(text[match.end(): line_end if line_end != -1 else None])
-                candidates.append([(segment, head)])
-                break
+        # okno wokół pierwszego trafienia; `window_per_hint` – osobny kandydat dla każdej frazy z `hints`
+        # (np. 'Pełnomocnictwo obejmuje…' trafia wcześniej niż 'adw. X', przy którym stoją dane)
+        hint_groups = [[h] for h in hints] if node.get("window_per_hint") else [hints]
+        for group in hint_groups:
+            for text in (scope, self.document) if scope is not self.document else (scope,):
+                match = _first_content_hint(group, text)
+                if match:
+                    i = text.count("\n", 0, match.start())
+                    text_lines = text.split("\n")
+                    lo, hi = max(0, i + window[0]), i + window[1] + text.count("\n", match.start(), match.end())
+                    segment = "\n".join(text_lines[lo:hi])
+                    # nazwa liczona od trafienia, nie od początku okna (okno może obejmować tytuł pisma);
+                    # bez zgadywania z dalszych linii – w oknie wpada proza ('NIP …', '… w postępowaniu …')
+                    line_end = text.find("\n", match.end())
+                    head = _clean_head(text[match.end(): line_end if line_end != -1 else None])
+                    candidates.append([(segment, head)])
+                    break
 
         return candidates
 
@@ -686,9 +762,15 @@ class RuleFiller:
         hints = node.get("hints", [])
         is_text = self.defs.format_of(node).get("json_type", "string") == "string" and not node.get("values")
         hint_seen = False
+        if not hints and regex and head[0] and node.get("type") == "text":
+            value, head[0] = head[0], None  # nagłówek sekcji ma pierwszeństwo przed `capture` (fallback)
+            return value
+        skip = re.compile(node["skip_context"]) if node.get("skip_context") else None
         for hint in hints:
             for m in _hint_re(hint).finditer(scope):
                 hint_seen = True
+                if skip and skip.search(_sentence_before(scope, m.start())):
+                    continue  # zdanie o innym postępowaniu ('… prowadzonym przez inny podmiot …')
                 if regex:
                     value = self._near(regex, scope, m)
                 elif is_text:
@@ -698,8 +780,10 @@ class RuleFiller:
                 if value:
                     return value
         # bez etykiety: wzorzec szukany w całym fragmencie – tylko gdy nie grozi to przypadkowym trafieniem
-        # (pole wymagane, własne `hints`/`capture` albo fragment zawężony etykietami obiektu-rodzica)
-        if regex and not hint_seen and (hints or node.get("capture") or not node.get("nullable") or focused):
+        # (pole wymagane, własne `hints`/`capture` albo fragment zawężony etykietami obiektu-rodzica);
+        # `require_hint` – nigdy (KRS bez etykiety 'KRS' to zwykle NIP o tej samej długości)
+        if (regex and not hint_seen and not node.get("require_hint")
+                and (hints or node.get("capture") or not node.get("nullable") or focused)):
             if m := regex.search(scope):
                 return _first_group(m)
         if not hints and not regex and head[0] and node.get("type") == "text":
@@ -744,8 +828,11 @@ class RuleFiller:
             return " ".join(text.split(closing)[0].split()) or None
 
         parts = [rest]
-        for line in following:  # zawinięta linia: poprzednia urywa się na słowie, a ta nie jest etykietą
-            if (not re.search(r"[^\W\d],?$", parts[-1]) or not line or "...." in line or re.match(r"[^:]{0,30}:", line)
+        # zawinięta linia: poprzednia urywa się na słowie (albo kontynuacja to jeden token, np. numer
+        # transakcji 'CEN2610289710500' dopisany na końcu tytułu przelewu), a ta nie jest etykietą
+        for line in following:
+            wrapped = re.search(r"[^\W\d],?$", parts[-1]) or re.fullmatch(r"[^\s:]+", line)
+            if (not wrapped or not line or "...." in line or re.match(r"[^:]{0,30}:", line)
                     or _TITLE_LINE_RE.fullmatch(line) or any(r.match(line) for r in self.labels)):
                 break
             parts.append(line)

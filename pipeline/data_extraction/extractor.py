@@ -88,7 +88,7 @@ class PdfExtractor:
 
         try:
             with _inference_mode():
-                result = self._extract_with_docling(path, (1, last_page) if max_pages else None)
+                result = self._extract_with_docling(path, (1, last_page) if max_pages else None, layout, last_page)
             ocr_applied = self.ocr_enabled and any(p <= last_page for p in layout.scanned)
             status, extra = "success", {}
         except Exception as exc:
@@ -114,7 +114,9 @@ class PdfExtractor:
 
     # --- Docling ---------------------------------------------------------------
 
-    def _extract_with_docling(self, path: Path, page_range: tuple[int, int] | None) -> dict[str, Any]:
+    def _extract_with_docling(
+        self, path: Path, page_range: tuple[int, int] | None, layout: PageLayout, last_page: int
+    ) -> dict[str, Any]:
         kwargs = {"page_range": page_range} if page_range else {}
         doc = self._get_converter().convert(str(path), **kwargs).document
 
@@ -127,7 +129,7 @@ class PdfExtractor:
 
         markdown = doc.export_to_markdown()
         result["markdown"] = markdown
-        result["text"] = doc.export_to_text()
+        result["text"] = _line_text(path, doc, layout, last_page)
         result["first_3_pages_markdown"] = _docling_preview(doc, markdown)
         return result
 
@@ -272,6 +274,34 @@ def _text_layer_lines(page, width: float, height: float) -> list[tuple[str, dict
             bbox = {"l": 0.0, "t": 0.0, "r": float(width), "b": float(height), "coord_origin": "BOTTOMLEFT"}
             lines.append((line, bbox))
     return lines
+
+
+def _line_text(path: Path, doc, layout: PageLayout, last_page: int) -> str:
+    """Tekst z zachowanym podziałem na linie PDF: strony cyfrowe z warstwy tekstowej, skany z OCR Docling.
+
+    `doc.export_to_text()` skleja linie w akapity, a tabele zamienia na Markdown
+    (np. 'Hartica Serwis S.A. ul. Akacjowa 54, … KRS: …' w jednej linii, '| Mocodawca | … |').
+    Reguły exportera opierają się na liniach (nazwa = pierwsza linia sekcji, data w nagłówku
+    na początku linii, podpis = linia z samym imieniem i nazwiskiem), więc dla stron z warstwą
+    tekstową bierzemy linie z pypdfium2.
+    """
+    if not layout.digital:
+        return doc.export_to_text()
+    try:
+        import pypdfium2 as pdfium  # type: ignore
+
+        pages: list[str] = []
+        with closing(pdfium.PdfDocument(str(path))) as pdf:
+            for page_no, page in _iter_pages(pdf, min(last_page, len(pdf))):
+                if page_no in layout.scanned:
+                    pages.append(doc.export_to_text(page_no=page_no))
+                else:
+                    width, height = page.get_size()
+                    pages.append("\n".join(line for line, _ in _text_layer_lines(page, width, height)))
+        return "\n".join(p for p in pages if p.strip())
+    except Exception as exc:
+        logger.debug("Odczyt warstwy tekstowej nie powiódł się dla %s: %s", path.name, exc)
+        return doc.export_to_text()
 
 
 def _docling_preview(doc, full_markdown: str) -> str:

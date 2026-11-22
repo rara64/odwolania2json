@@ -7,6 +7,10 @@
 # Węzeł:
 #   type: object  → fields: {nazwa: węzeł, ...}
 #   type: array   → items: węzeł; min_items (domyślnie 0)
+#                   split_numbered – element na każdą pozycję listy '1) … 2) …'
+#                   signatures     – elementy z bloków podpisów (linie pod '.....');
+#                                    pomija podpisy poprzedzone etykietą ze `stops`
+#                   stops          – etykiety kończące sekcję
 #   type: <format z formats.yaml> → pole-liść
 #
 # Pole:
@@ -65,6 +69,8 @@ documents:
         min_items: 1
         description: Wykonawca(y) wnoszący odwołanie
         hints: ['Odwołujący:', 'Wykonawca:']
+        # sekcja kończy się przed innym wykonawcą ('Wykonawca wybrany (potencjalny uczestnik …):') i opisem postępowania
+        stops: ['Wykonawca wybrany', 'dotyczy:']
         items:
           type: object
           fields:
@@ -72,6 +78,7 @@ documents:
               type: krs
               nullable: true
               hints: ['KRS', 'nr KRS']
+              require_hint: true   # bez etykiety 'KRS' wzorzec 10 cyfr łapał NIP
             nazwa:
               type: text
               description: Pełna nazwa (firma) odwołującego
@@ -98,7 +105,8 @@ documents:
                   description: Nazwa kancelarii pełnomocnika
                   hints: ['Kancelaria']
                   # zawinięta nazwa: kontynuacja z małej litery w następnej linii (Docling wstawia między nie pustą linię)
-                  capture: '(Kancelari[^\n,]*(?:\n(?:[ \t]*\n)?[ \t]*[a-ząćęłńóśźż][^\n,]*)?)'
+                  # także nazwiska/marka przed słowem 'Kancelaria' ('Stępień Borkowski Kancelaria Prawna sp.p.', 'Rutkowski i Bąk Kancelaria …')
+                  capture: '((?:[A-ZĄĆĘŁŃÓŚŹŻ][\w-]*[ \t]+(?:i[ \t]+)?){0,4}Kancelari[^\n,]*(?:\n(?:[ \t]*\n)?[ \t]*[a-ząćęłńóśźż][^\n,]*)?)'
                 mail:
                   type: email
                   nullable: true
@@ -118,6 +126,7 @@ documents:
               type: krs
               nullable: true
               hints: ['KRS']
+              require_hint: true   # bez etykiety 'KRS' wzorzec 10 cyfr łapał NIP (gminy, jednostki publiczne)
             nazwa:
               type: text
             nip:
@@ -140,16 +149,20 @@ documents:
           numer_bzp:
             type: numer_bzp
             nullable: true
-            hints: ['BZP', 'Biuletyn Zamówień Publicznych', 'nr ogłoszenia']
+            hints: ['Biuletyn Zamówień Publicznych', 'nr ogłoszenia', 'BZP']   # 'BZP' na końcu: nie pasuje do '2026/BZP00999242' (sklejone)
+            skip_context: &other_proceeding '(?i)inn\w*\s+podmiot|poprzedni\w*\s+prowadzon|inny\w*\s+postępowani'
           numer_postepowania:
             type: text
             description: Znak/numer referencyjny postępowania nadany przez zamawiającego, np. ZS.791.2026
             hints: ['znak sprawy', 'nr postępowania', 'numer postępowania', 'numer referencyjny', 'nr referencyjny', 'sygn.']
-            capture: '\b([A-ZŁŚŻ][A-Za-z]{0,9}(?:[./-][A-Za-z0-9]+)*[./-]\d{4})\b'
+            # ostatni człon: rok (ZP.431.2026) albo numer/rok skrócony (DSC/PN/2026/011, DAZ/PN/67/26)
+            capture: '\b([A-ZŁŚŻ][A-Za-z]{0,9}(?:[./-][A-Za-z0-9]+)*[./-]\d{2,4})\b'
           numer_ted:
             type: numer_ted
             nullable: true
             hints: ['TED', 'Dz.U. S', 'Dziennik Urzędowy Unii Europejskiej']
+            # pomija numery z uzasadnienia: '… w postępowaniu prowadzonym przez inny podmiot …, ogłoszonym w Dz.U. UE pod numerem …'
+            skip_context: *other_proceeding
           tytul:
             type: text
             description: Nazwa (przedmiot) zamówienia, bez cudzysłowów
@@ -165,6 +178,12 @@ documents:
         min_items: 1
         description: Podmiot(y) udzielający pełnomocnictwa
         hints: ['Mocodawca', 'w imieniu', 'działając w imieniu']
+        # dane rejestrowe stoją zwykle kilka linii pod nazwą ('Mocodawca X' / adres / 'Dane rejestrowe KRS …')
+        window: [-5, 6]
+        # szablony bez etykiety ('X sp. z o.o. z siedzibą w …') – mocodawca z całego dokumentu
+        whole_scope_fallback: true
+        # konsorcjum: '(Konsorcjum): 1) X sp. z o.o., …, KRS …; 2) Y sp.j., …' – element na wykonawcę
+        split_numbered: true
         items:
           type: object
           fields:
@@ -175,13 +194,18 @@ documents:
                   type: person_name
                   nullable: true
                   description: Tylko dla osoby fizycznej (JDG) – imię i nazwisko przedsiębiorcy
+                  capture: '([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+[ 	]+[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+(?:-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+)?),\s+prowadząc\w*\s+działalnoś'
                 krs:
                   type: krs
                   nullable: true
                   hints: ['KRS']
+                  require_hint: true   # JDG nie ma KRS – bez etykiety łapany był NIP
                 nazwa:
                   type: text
                   description: Nazwa/firma mocodawcy
+                  # gdy brak nagłówka sekcji: firma JDG ('pod firmą DUDEK-TECH Jarosław Dudek,') albo
+                  # pierwsza firma zakończona formą prawną (także zawinięta do kolejnej linii)
+                  capture: 'pod\s+firmą\s+([^,]+?),|((?:(?!(?:Pełnomocnictw|Mocodaw)\w*)[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż][\w&-]*(?:[ \t]+|[ \t]*\n[ \t]*)){1,6}(?:sp\.[ \t]?z[ \t]?o\.[ \t]?o\.(?:[ \t]?sp\.[ \t]?k\.)?|sp\.[ \t]?[kjp]\.|S\.A\.))'
                 nip:
                   type: nip
                   hints: ['NIP']
@@ -194,7 +218,11 @@ documents:
               min_items: 1
               description: Osoby podpisujące pełnomocnictwo w imieniu mocodawcy
               hints: ['podpis', 'Prezes Zarządu', 'Członek Zarządu', 'wspólnik']
+              signatures: true
               stops: ['Pełnomocnictwo przyjmuję', 'W imieniu']
+              # konsorcjum: podpisy pogrupowane pod 'W imieniu X sp. z o.o.:' – tylko grupa tego mocodawcy
+              signature_groups: ['W imieniu']
+              signature_owner: data.nazwa
               items:
                 type: object
                 fields:
@@ -205,7 +233,8 @@ documents:
         type: array
         min_items: 1
         description: Osoby umocowane (pełnomocnicy)
-        hints: ['udzielam pełnomocnictwa', 'ustanawiam pełnomocnikiem', 'Pełnomocnicy', 'adw.', 'r.pr.']
+        hints: ['udzielam pełnomocnictwa', 'ustanawiam pełnomocnikiem', 'upoważniam', 'Pełnomocnicy', 'adw.', 'r.pr.']
+        window_per_hint: true
         stops: ['Pełnomocnictwo przyjmuję', 'W imieniu', 'Mocodawca:', 'Z poważaniem']
         items:
           type: object
@@ -228,14 +257,17 @@ documents:
           data_operacji:
             type: date
             description: Data wykonania/księgowania przelewu
-            hints: ['data operacji', 'data transakcji', 'data realizacji', 'data wykonania']
+            # 'w dniu' – szablon listu banku ('Bank potwierdza, że w dniu …'); bez niej łapana była data pisma z nagłówka
+            hints: ['data operacji', 'data transakcji', 'data realizacji', 'data wykonania', 'w dniu']
           kwota:
             type: amount
-            hints: ['kwota', 'wartość']
+            # 'w kwocie' – szablon listu banku; bez niej łapany był numer domu z adresu banku
+            hints: ['kwota', 'wartość', 'w kwocie']
           na_rachunek:
             type: bank_account
             description: Rachunek odbiorcy
-            hints: ['na rachunek', 'rachunek odbiorcy', 'rachunek beneficjenta']
+            # 'Beneficjent' / 'Odbiorca' / 'Adresat' / 'rachunek uznawany' – szablony tabelaryczne; bez nich łapany był rachunek płatnika
+            hints: ['na rachunek', 'rachunek odbiorcy', 'rachunek beneficjenta', 'rachunek uznawany', 'Beneficjent', 'Odbiorca', 'Adresat']
           numer_transakcji:
             type: text
             description: Identyfikator transakcji w banku

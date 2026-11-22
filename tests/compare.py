@@ -145,7 +145,7 @@ def main() -> int:
         try:
             diffs = compare_files(a, b, args.strict)
         except json.JSONDecodeError as e:
-            print(f"{_c('BŁĄD', '31')}    {label}: niepoprawny JSON ({e})")
+            print(f"{_c('BLAD', '31')}    {label}: niepoprawny JSON ({e})")
             n_diff += 1
             continue
         if not diffs:
@@ -153,14 +153,14 @@ def main() -> int:
             n_ok += 1
             continue
         n_diff += 1
-        print(f"{_c('RÓŻNE', '31')}   {label}  ({len(diffs)} pól)")
+        print(f"{_c('ROZNE', '31')}   {label}  ({len(diffs)} pol)")
         if not args.quiet:
             width = max(len(k) for k, _, _ in diffs)
             for key, va, vb in diffs:
                 print(f"    {key:<{width}}  {_c(fmt(va), '32')}  →  {_c(fmt(vb), '31')}")
 
     total = n_ok + n_diff + n_missing
-    print(f"\n{n_ok}/{total} zgodnych, {n_diff} różnych, {n_missing} brakujących  "
+    print(f"\n{n_ok}/{total} zgodnych, {n_diff} roznych, {n_missing} brakujacych  "
           f"(A={os.path.relpath(left)}, B={os.path.relpath(right)})")
     return 0 if n_diff == n_missing == 0 else 1
 

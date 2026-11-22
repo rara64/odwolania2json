@@ -127,7 +127,7 @@ formats:
 
   bank_account:
     json_type: string
-    capture: '((?:PL)?[ ]?\d{2}(?:[ ]?\d{4}){6})'
+    capture: '((?:PL)?[ ]?\d{2}(?:[ \n]?\d{4}){6})'   # \n – numer zawinięty do następnej linii
     description: Numer rachunku NRB – 26 cyfr, bez prefiksu PL i spacji
     normalize: [strip, remove_prefix_PL, digits_only]
     pattern: '^\d{26}$'
