@@ -589,48 +589,63 @@ class RuleFiller:
         self.defs = definitions
         self.document = ""
         self.labels: list[re.Pattern] = []
+        self.provenance: dict | None = None
 
-    def fill(self, label: str, text: str) -> Any:
+    def fill(self, label: str, text: str, provenance: dict | None = None) -> Any:
         self.document = (text or "").replace("\r", "").replace("\u00a0", " ")
         schema = self.defs.fields[label]
         self.labels = [_hint_re(h, anchored=True) for h in sorted(_all_hints(schema))]
-        return self._node(schema, self.document, [None], [])
+        self.provenance = provenance
+        return self._node(schema, self.document, [None], [], path="", prov=provenance)
 
     # węzły
 
-    def _node(self, node: dict, scope: str, head: list, siblings: list[str], focused: bool = False) -> Any:
+    def _node(self, node: dict, scope: str, head: list, siblings: list[str], focused: bool = False, path: str = "", prov: dict | None = None) -> Any:
         kind = node.get("type")
         if kind == "object":
-            return self._object(node, scope, head)
+            return self._object(node, scope, head, focused, path=path, prov=prov)
         if kind == "array":
-            return self._array(node, scope, siblings)
-        return self._leaf(node, scope, head, focused)
+            return self._array(node, scope, siblings, path=path, prov=prov)
+        return self._leaf(node, scope, head, focused, path=path, prov=prov)
 
-    def _object(self, node: dict, scope: str, head: list, focused: bool = False) -> dict:
+    def _object(self, node: dict, scope: str, head: list, focused: bool = False, path: str = "", prov: dict | None = None) -> dict:
         children = node["fields"]
         result = {}
         for name, child in children.items():
+            child_path = f"{path}.{name}" if path else name
             siblings = [h for other, c in children.items() if other != name and _is_container(c) for h in c.get("hints", [])]
             if child.get("type") == "object" and child.get("hints"):
                 window = tuple(child.get("window", self.OBJECT_WINDOW))
                 segmentations = self._segmentations(child, scope, siblings, window) or [[(scope, None)]]
-                candidates = [
-                    self._object(child, sub_scope, [sub_head], focused=True)
-                    for sub_scope, sub_head in (segs[0] for segs in segmentations)
-                ]
-                result[name] = max(candidates, key=_filled)  # przy remisie pierwszy kandydat
+                if prov is not None:
+                    cand_results = []
+                    cand_provs = []
+                    for sub_scope, sub_head in (segs[0] for segs in segmentations):
+                        cp = {}
+                        res = self._object(child, sub_scope, [sub_head], focused=True, path=child_path, prov=cp)
+                        cand_results.append(res)
+                        cand_provs.append(cp)
+                    best_idx = max(range(len(cand_results)), key=lambda idx: _filled(cand_results[idx]))
+                    prov.update(cand_provs[best_idx])
+                    result[name] = cand_results[best_idx]
+                else:
+                    candidates = [
+                        self._object(child, sub_scope, [sub_head], focused=True)
+                        for sub_scope, sub_head in (segs[0] for segs in segmentations)
+                    ]
+                    result[name] = max(candidates, key=_filled)  # przy remisie pierwszy kandydat
             elif child.get("type") == "array" and child.get("signature_owner"):
                 owner = _resolve(child["signature_owner"], [result])
-                result[name] = self._array(child, scope, siblings, owner if isinstance(owner, str) else None)
+                result[name] = self._array(child, scope, siblings, owner if isinstance(owner, str) else None, path=child_path, prov=prov)
             else:
-                result[name] = self._node(child, scope, head, siblings, focused)
+                result[name] = self._node(child, scope, head, siblings, focused, path=child_path, prov=prov)
         return result
 
-    def _array(self, node: dict, scope: str, siblings: list[str], owner: str | None = None) -> list:
+    def _array(self, node: dict, scope: str, siblings: list[str], owner: str | None = None, path: str = "", prov: dict | None = None) -> list:
         if node.get("signatures"):
             blocks = self._signature_blocks(node, scope, owner) or self._signature_blocks(node, self.document, owner)
             if blocks:
-                return self._items(node["items"], blocks)
+                return self._items(node["items"], blocks, path=path, prov=prov)
         window = tuple(node.get("window", self.ARRAY_WINDOW))
         segmentations = self._segmentations(node, scope, siblings, window)
         if not segmentations:
@@ -642,8 +657,21 @@ class RuleFiller:
             segmentations.append([(scope, None)])
         if node.get("split_numbered"):
             segmentations = [self._expand_numbered(segs) for segs in segmentations]
-        candidates = [self._items(node["items"], segs) for segs in segmentations]
-        return max(candidates, key=_filled)
+
+        if prov is not None:
+            cand_results = []
+            cand_provs = []
+            for segs in segmentations:
+                cp = {}
+                res = self._items(node["items"], segs, path=path, prov=cp)
+                cand_results.append(res)
+                cand_provs.append(cp)
+            best_idx = max(range(len(cand_results)), key=lambda idx: _filled(cand_results[idx]))
+            prov.update(cand_provs[best_idx])
+            return cand_results[best_idx]
+        else:
+            candidates = [self._items(node["items"], segs) for segs in segmentations]
+            return max(candidates, key=_filled)
 
     SIGNATURE_LINES = 3  # linie pod '.....' należące do podpisu (np. 'Za X sp. z o.o.', imię i nazwisko, funkcja)
 
@@ -690,10 +718,11 @@ class RuleFiller:
                 expanded.append((seg, seg_head))
         return expanded
 
-    def _items(self, item: dict, segments: list[tuple[str, str | None]]) -> list:
+    def _items(self, item: dict, segments: list[tuple[str, str | None]], path: str = "", prov: dict | None = None) -> list:
         name_field = self._person_key(item)
         if not name_field:
-            return [self._node(item, seg, [seg_head], []) for seg, seg_head in segments]
+            return [self._node(item, seg, [seg_head], [], path=f"{path}[{i}]" if path else f"[{i}]", prov=prov)
+                    for i, (seg, seg_head) in enumerate(segments)]
 
         # tablica osób: jeden element na każde znalezione imię i nazwisko
         capture = re.compile(self._capture(item["fields"][name_field]), re.MULTILINE)
@@ -705,9 +734,13 @@ class RuleFiller:
                 if person.lower() in seen:
                     continue
                 seen.add(person.lower())
+                elem_idx = len(items)
+                elem_path = f"{path}[{elem_idx}]" if path else f"[{elem_idx}]"
                 end = matches[i + 1].start() if i + 1 < len(matches) else len(seg)
-                element = self._node(item, seg[match.start():end], [None], [])
+                element = self._node(item, seg[match.start():end], [None], [], path=elem_path, prov=prov)
                 element[name_field] = person
+                if prov is not None:
+                    self._record_prov(prov, f"{elem_path}.{name_field}", person, seg, match.start(), match.end())
                 items.append(element)
         return items
 
@@ -785,7 +818,14 @@ class RuleFiller:
             return f"(?:{capture})|(?:{node['capture_also']})"
         return capture
 
-    def _leaf(self, node: dict, scope: str, head: list, focused: bool = False) -> Any:
+    @staticmethod
+    def _record_prov(prov: dict, path: str, value: Any, scope: str, start: int, end: int) -> None:
+        """Record the character span in `scope` (which is a substring of self.document) for `path`."""
+        if prov is None:
+            return
+        prov[path] = {"value": value, "scope_offset": start, "scope_len": len(scope), "match_start": start, "match_end": end}
+
+    def _leaf(self, node: dict, scope: str, head: list, focused: bool = False, path: str = "", prov: dict | None = None) -> Any:
         capture = self._capture(node)
         regex = re.compile(capture, re.MULTILINE) if capture else None
         hints = node.get("hints", [])
@@ -802,8 +842,19 @@ class RuleFiller:
                     continue  # zdanie o innym postępowaniu ('… prowadzonym przez inny podmiot …')
                 if regex:
                     value = self._near(regex, scope, m)
+                    if value and prov is not None and path:
+                        # find exact span of value in scope near hint
+                        lo = max(0, m.start() - 40)
+                        vm = re.search(re.escape(value), scope[lo:m.end() + 160])
+                        if vm:
+                            abs_start = lo + vm.start()
+                            self._record_prov(prov, path, value, scope, abs_start, lo + vm.end())
                 elif is_text:
                     value = self._text_after(scope, m)
+                    if value and prov is not None and path:
+                        vm = re.search(re.escape(value), scope[m.start():])
+                        if vm:
+                            self._record_prov(prov, path, value, scope, m.start() + vm.start(), m.start() + vm.end())
                 else:
                     value = None
                 if value:
@@ -814,7 +865,10 @@ class RuleFiller:
         if (regex and not hint_seen and not node.get("require_hint")
                 and (hints or node.get("capture") or not node.get("nullable") or focused)):
             if m := regex.search(scope):
-                return _first_group(m)
+                value = _first_group(m)
+                if value and prov is not None and path:
+                    self._record_prov(prov, path, value, scope, m.start(), m.end())
+                return value
         if not hints and not regex and head[0] and node.get("type") == "text":
             value, head[0] = head[0], None  # pierwsza linia sekcji, np. nazwa pod 'Odwołujący:'
             return value
@@ -918,18 +972,27 @@ class JsonExporter:
             self._classifier = _load_classifier()
         return self._classifier(text)
 
-    def process(self, pdf_path: str | Path) -> tuple[str | None, Any, Report]:
-        """PDF → (klasa, dane JSON, raport)."""
+    def process(self, pdf_path: str | Path, provenance: dict | None = None) -> tuple[str | None, Any, Report]:
+        """PDF → (klasa, dane JSON, raport).
+
+        Optional *provenance* dict is populated with per-field source spans when supplied.
+        """
         extracted = self._extract(Path(pdf_path))
         text = extracted.get("text") or extracted.get("markdown") or ""
         label = self.classify(text)
-        data, report = self.build(text, label)
+        data, report = self.build(text, label, provenance=provenance)
         meta = extracted.get("metadata") or {}
         report.extraction = {k: meta[k] for k in ("filename", "status", "total_pages", "ocr_applied", "warning") if k in meta}
+        if provenance is not None:
+            provenance["__text__"] = text
         return label, data, report
 
-    def build(self, text: str, label: str | None) -> tuple[Any, Report]:
-        """Tekst dokumentu + klasa → (dane JSON, raport)."""
+    def build(self, text: str, label: str | None, provenance: dict | None = None) -> tuple[Any, Report]:
+        """Tekst dokumentu + klasa → (dane JSON, raport).
+
+        Optional *provenance* dict is populated with per-field source spans when supplied.
+        The dict gets a ``__text__`` key with the full document text.
+        """
         report = Report(document_class=label)
         if label is None or label not in self.defs.fields:
             if label is not None:
@@ -939,9 +1002,11 @@ class JsonExporter:
 
         schema = self.defs.fields[label]
         report.source = "rules"
-        data = self._conform(schema, self.rules.fill(label, text), "", report)
+        data = self._conform(schema, self.rules.fill(label, text, provenance=provenance), "", report)
         self._apply_derivations(label, data, report)
         self._check_required(schema, data, "", report)
+        if provenance is not None:
+            provenance["__text__"] = text
         return data, report
 
     # zapis

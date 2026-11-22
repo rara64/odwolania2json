@@ -21,3 +21,6 @@ pydantic>=2.0.0
 
 # Polish morphology
 morfeusz2>=1.99.0
+
+pyyaml
+pypdfium2
